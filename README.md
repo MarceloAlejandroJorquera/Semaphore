@@ -102,6 +102,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Inspired by PeerBlock LLC
 - Built with Qt Framework
 - Uses Windows Defender Firewall with Advanced Security
