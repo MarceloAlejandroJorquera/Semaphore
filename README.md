@@ -34,7 +34,7 @@ A modern, real-time network monitoring and firewall application built with Qt. S
 
 ## Download
 
-Get the latest installer from the [Releases page]([https://github.com/marcelojorquera/Semaphore/release](https://github.com/MarceloAlejandroJorquera/Semaphore/releases/tag/v1.0.0]).
+Get the latest installer from the [Releases page](https://github.com/MarceloAlejandroJorquera/Semaphore/releases/tag/v1.0.0).
 
 ## System Requirements
 
