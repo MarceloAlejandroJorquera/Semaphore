@@ -1,6 +1,6 @@
 # Semaphore Firewall
 
-A modern, real-time network monitoring and firewall application built with Qt, inspired by PeerBlock. Semaphore provides granular IP blocking with advanced range management capabilities.
+A modern, real-time network monitoring and firewall application built with Qt. Semaphore provides granular IP blocking with advanced range management capabilities.
 
 ![Platform](https://img.shields.io/badge/platform-Windows-blue)
 ![Qt](https://img.shields.io/badge/Qt-6.9.2-green)
