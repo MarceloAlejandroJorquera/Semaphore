@@ -86,7 +86,7 @@ Get the latest installer from the [Releases page](https://github.com/MarceloAlej
 
 - **Backend**: Windows Filtering Platform (WFP) integration
 - **Frontend**: Qt 6.9.2 with custom table delegates
-- **Performance**: Optimized for large blocklists (100,000+ ranges)
+- **Performance**: Optimized for small to medium blacklists (thousands+ ranges)
 - **Memory**: Efficient caching and lazy loading
 
 ## Support
