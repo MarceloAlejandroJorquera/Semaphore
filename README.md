@@ -1,4 +1,4 @@
-# Semaphore Firewall
+# Semaphore
 
 A modern, real-time network monitoring and firewall application built with Qt. Semaphore provides granular IP blocking with advanced range management capabilities.
 
