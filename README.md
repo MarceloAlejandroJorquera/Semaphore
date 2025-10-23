@@ -4,7 +4,7 @@ A modern, real-time network monitoring and firewall application built with Qt. S
 
 ![Platform](https://img.shields.io/badge/platform-Windows-blue)
 ![Qt](https://img.shields.io/badge/Qt-6.9.2-green)
-![Qt](https://img.shields.io/badge/Npcap-purple)
+![Npcap](https://img.shields.io/badge/Npcap-Required-purple)
 
 ## Features
 
