@@ -4,6 +4,7 @@ A modern, real-time network monitoring and firewall application built with Qt. S
 
 ![Platform](https://img.shields.io/badge/platform-Windows-blue)
 ![Qt](https://img.shields.io/badge/Qt-6.9.2-green)
+![Qt](https://img.shields.io/badge/Npcap-purple)
 
 ## Features
 
@@ -44,6 +45,7 @@ Get the latest installer from the [Releases page](https://github.com/MarceloAlej
 
 ## Quick Start
 
+1. **Install**: Npcap: Windows Packet Capture Library & Driver
 1. **Install**: Run the installer and follow the setup wizard
 2. **Monitor**: Open Semaphore to see real-time network traffic
 3. **Block IPs**: Double-click green cells in any table to block IPs
