@@ -95,8 +95,7 @@ If you find this software useful, consider supporting its development:
 
 [![PayPal](https://img.shields.io/badge/PayPal-Donate-blue)](https://www.paypal.com/paypalme/jorqueramarcelo)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Buy%20a%20Coffee-orange)](https://ko-fi.com/marcelojorquera)
-[![Patreon][https://www.patreon.com/posts/introducing-new-141909675?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link
-](https://img.shields.io/badge/Patreon-Support-red)
+[![Patreon](https://img.shields.io/badge/Patreon-Support-red)](https://www.patreon.com/MarceloJorquera)
 
 ## License
 
