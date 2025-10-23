@@ -77,7 +77,7 @@ Get the latest installer from the [Releases page](https://github.com/MarceloAlej
 
 ## Building from Source
 
-*Note: This is a binary-only release. Source code available for educational purposes.*
+*Note: This is a binary-only release. Source code may be available in the future for educational purposes.*
 
 ### Requirements
 - Qt 6.9.2 (mingw_64)
@@ -88,7 +88,7 @@ Get the latest installer from the [Releases page](https://github.com/MarceloAlej
 
 - **Backend**: Windows Filtering Platform (WFP) integration
 - **Frontend**: Qt 6.9.2 with custom table delegates
-- **Performance**: Optimized for small to medium blacklists (thousands+ ranges)
+- **Performance**: Optimized for small to medium blacklists
 - **Memory**: Efficient caching and lazy loading
 
 ## Support
@@ -106,4 +106,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Built with Qt Framework
+- Only possible with Npcap: Windows Packet Capture Library & Driver
 - Uses Windows Defender Firewall with Advanced Security
