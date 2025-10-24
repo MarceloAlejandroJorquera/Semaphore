@@ -1,17 +1,19 @@
-# Classify as C++ (most accurate for your project)
+# Primary language: C++
 *.cpp linguist-language=C++
 *.h linguist-language=C++
 *.hpp linguist-language=C++
+*.c linguist-language=C++
 
-# Qt specific files
+# Qt files
 *.qml linguist-language=QML
 *.pro linguist-language=QMake
 *.pri linguist-language=QMake
 
-# Exclude documentation and config files
+# Exclude from language stats
 *.md linguist-documentation
 *.json linguist-documentation
 *.txt linguist-documentation
 *.yml linguist-documentation
 *.xml linguist-documentation
 docs/** linguist-documentation
+build/** linguist-vendored
