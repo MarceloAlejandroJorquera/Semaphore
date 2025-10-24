@@ -1,0 +1,43 @@
+# .gitignore
+# Build and binary artifacts
+build/
+release/
+debug/
+dist/
+*.exe
+*.dll
+*.lib
+*.obj
+*.pdb
+*.ilk
+
+# Qt specific
+Makefile*
+*.pro.user
+*.qrc.d
+moc_*
+qrc_*
+ui_*
+
+# Installer files
+*.msi
+*.tmp
+*.log
+
+# OS generated
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.temp
