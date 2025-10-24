@@ -76,6 +76,7 @@ Get the latest installer from the [Releases page](https://github.com/MarceloAlej
 - **IP Range**: `192.168.1.1-192.168.1.255`
 - **CIDR Notation**: `192.168.1.0/24`
 - **Named Ranges**: `My Server|192.168.1.1-192.168.1.255`
+- **IPv6**: Same formats of IPv4 & supports full/abbreviated notations
 
 ## Building from Source
 
