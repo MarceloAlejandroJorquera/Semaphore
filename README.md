@@ -2,7 +2,7 @@
 
 <img width="1200" height="582" alt="semaphore1" src="https://github.com/user-attachments/assets/d35429bf-e32d-4d58-ae7a-987afd66e8c9" />
 
-A modern, real-time network monitoring and firewall application built with Qt. Semaphore provides granular IP blocking with advanced range management capabilities.
+A modern, real-time network monitoring and firewall application for Windows built with Qt. Semaphore provides granular IP blocking with advanced range management capabilities.
 
 ![Platform](https://img.shields.io/badge/platform-Windows-blue)
 ![Qt](https://img.shields.io/badge/Qt-6.9.2-green)
