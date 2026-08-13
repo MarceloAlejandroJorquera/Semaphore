@@ -1,43 +1,81 @@
-# .gitignore
-# Build and binary artifacts
+# Semaphore public release repository
+# Source code, build output and development artifacts are intentionally excluded.
+
+# Source code
+*.c
+*.cc
+*.cpp
+*.cxx
+*.h
+*.hh
+*.hpp
+*.hxx
+
+# Qt / build definitions
+*.pro
+*.pri
+*.pro.user
+*.qrc
+CMakeLists.txt
+CMakePresets.json
+cmake/
+
+# Scripts and development tooling
+*.bat
+*.cmd
+*.ps1
+*.py
+
+# Build output
 build/
 release/
 debug/
 dist/
-*.exe
+out/
+bin/
+obj/
+
 *.dll
 *.lib
 *.obj
 *.pdb
 *.ilk
+*.a
+*.o
 
-# Qt specific
+# Do not commit release executables to the repository.
+# Published binaries belong in GitHub Release assets.
+*.exe
+*.msi
+
+# Generated Qt files
 Makefile*
-*.pro.user
-*.qrc.d
 moc_*
 qrc_*
 ui_*
+*.qrc.d
 
-# Installer files
-*.msi
-*.tmp
-*.log
-
-# OS generated
-.DS_Store
-Thumbs.db
-Desktop.ini
+# Local databases / packaged development resources
+*.mmdb
 
 # IDE files
 .vscode/
 .idea/
+.vs/
 *.sln
 *.vcxproj
 *.vcxproj.filters
+*.user
 
 # Temporary files
 temp/
 tmp/
 *.tmp
 *.temp
+*.log
+*~
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
