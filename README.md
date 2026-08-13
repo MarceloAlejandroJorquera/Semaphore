@@ -651,7 +651,6 @@ If you find Semaphore useful, you can support continued development:
 
 [![PayPal](https://img.shields.io/badge/PayPal-Donate-blue)](https://www.paypal.com/paypalme/jorqueramarcelo)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Buy%20a%20Coffee-orange)](https://ko-fi.com/marcelojorquera)
-[![Patreon](https://img.shields.io/badge/Patreon-Support-red)](https://www.patreon.com/c/MAJC)
 
 ---
 
