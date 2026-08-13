@@ -15,12 +15,29 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Release-v1-brightgreen" alt="Release v1">
-  <img src="https://img.shields.io/badge/Status-Stable-brightgreen" alt="Stable">
-  <img src="https://img.shields.io/badge/Platform-Windows%20x64-blue" alt="Windows x64">
-  <img src="https://img.shields.io/badge/Qt-6.11.1-green" alt="Qt 6.11.1">
-  <img src="https://img.shields.io/badge/Capture-Windows%20Packet%20Monitor-blueviolet" alt="Windows Packet Monitor">
-  <img src="https://img.shields.io/badge/Firewall-WFP-red" alt="Windows Filtering Platform">
+  <a href="https://github.com/MarceloAlejandroJorquera/Semaphore/releases/latest">
+    <img src="https://img.shields.io/badge/Release-v1-blue" alt="Release v1">
+  </a>
+
+  <a href="#whats-new-in-semaphore-v1">
+    <img src="https://img.shields.io/badge/Status-Stable-brightgreen" alt="Stable">
+  </a>
+
+  <a href="#system-requirements">
+    <img src="https://img.shields.io/badge/Platform-Windows%20x64-blue" alt="Windows x64">
+  </a>
+
+  <a href="#system-requirements">
+    <img src="https://img.shields.io/badge/Qt-6.11.1-green" alt="Qt 6.11.1">
+  </a>
+
+  <a href="#native-windows-packet-capture">
+    <img src="https://img.shields.io/badge/Capture-Windows%20Packet%20Monitor-blueviolet" alt="Windows Packet Monitor">
+  </a>
+
+  <a href="#windows-filtering-platform-firewall">
+    <img src="https://img.shields.io/badge/Firewall-WFP-red" alt="Windows Filtering Platform">
+  </a>
 </p>
 
 ---
