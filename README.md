@@ -593,13 +593,13 @@ It is an endpoint-oriented monitoring and policy-control tool.
 
 ---
 
-# Portable release and source availability
+# Distribution and source availability
 
 Semaphore v1 is currently distributed as a **compiled Windows binary**.
 
-The source code is **not included with this release**.
+The source code is **not included with this release**. Source availability may change in the future.
 
-Source availability may change in the future.
+Semaphore v1 is distributed under the terms of the MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
