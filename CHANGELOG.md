@@ -1,0 +1,420 @@
+# Semaphore v1.1.1 — Exhaustive changes since v1.1
+
+This changelog is intentionally exhaustive for the v1.1 → v1.1.1 development cycle.
+
+## Added
+
+- Local ASN organization lookup for public IPv4/IPv6 endpoints using packaged MaxMind GeoLite2 ASN data.
+- Compact runtime ASN organization data generated for Semaphore instead of performing per-address online organization lookups.
+- Automatic endpoint ID/name assignment from ASN organization data when no higher-priority identity exists.
+- Automatic propagation/refresh of generated endpoint identities across applicable traffic and policy views.
+- Manual-ID preservation so user-entered identities remain authoritative over generated identities.
+- Deterministic generated-identity precedence: manual ID/name → well-known/special-purpose identity → ASN organization → `Unnamed`.
+- Built-in recognition of applicable well-known and special-purpose IPv4 ranges.
+- Built-in recognition of applicable well-known and special-purpose IPv6 ranges.
+- Descriptive identification for recognized multicast, link-local, loopback/local and scoped multicast traffic where applicable.
+- Special-purpose identity handling that takes precedence over a generic ASN organization where the local/network role is more useful.
+- Local special-purpose/ASN identity generation without adding an external address-lookup API.
+- Unified Blacklist/Whitelist policy representation for simple and scoped rules.
+- Lane/direction as an explicit policy dimension.
+- Protocol as an explicit policy dimension.
+- Port as an explicit policy dimension.
+- Country scope as part of the normalized policy representation.
+- ID as a distinct human-readable policy/endpoint field.
+- ID Filter as a distinct matching field separate from ID.
+- Protocol selector support for the IP protocol-number space and applicable protocol names.
+- Separate IPv4/IPv6 protocol identities where applicable, including TCPv4/TCPv6 and UDPv4/UDPv6.
+- Explicit `Any` protocol/Port policy state.
+- Explicit `None` protocol/Port state that intentionally matches nothing instead of behaving as a wildcard.
+- Scoped policy enforcement plumbing from GUI policy rows into the effective WFP policy path.
+- Policy normalization shared by Blacklist controls, Whitelist controls, live traffic actions, traffic-history actions, restored persisted rules and rule edits.
+- Exact duplicate policy collapse.
+- Compatible address/range merge handling that preserves all other policy dimensions.
+- Compatible adjacent/overlapping Port-range coalescing when every other scope dimension is equivalent.
+- Multi-value ID Filter storage.
+- `*` wildcard support in ID Filter values.
+- `?` wildcard support in ID Filter values.
+- OR semantics between multiple ID Filter values in the same rule.
+- Badge-based ID Filter editor.
+- Removable `×` controls for individual ID Filter badges.
+- Compact scrolling for ID Filter editors containing more values than the visible editor height.
+- ID Filter rule merging by unioning filter values when every other policy dimension is equivalent.
+- Complete composite-policy summary on ID hover.
+- Policy-summary badges for action, Lane, Protocol, Port, ID Filter, Country and address scope where applicable.
+- Compact badge rendering for Blacklist/Whitelist Protocol values.
+- Compact badge rendering for Blacklist/Whitelist Port values.
+- Compact badge rendering for Blacklist/Whitelist ID Filter values.
+- Compact monitor-table badges for D&T.
+- Compact monitor-table badges for ID.
+- Compact monitor-table badges for Protocol.
+- Content-sized monitor badges instead of full-cell-width badge backgrounds.
+- Adaptive badge typography so values that previously fitted are not unnecessarily truncated by badge padding.
+- Reduced Through-table badge typography for dense timestamp/protocol values.
+- Smooth antialiased diagonal empty-value marker for applicable empty monitor/policy cells.
+- Explicit exclusion of empty ID Filter cells from the diagonal empty-value marker.
+- Explicit full-value tooltips for truncated Blacklist/Whitelist address/range cells.
+- WFP classify-drop telemetry for traffic blocked by Semaphore-owned WFP filters.
+- Semaphore-owned runtime filter-ID validation before a WFP drop event is surfaced to the GUI.
+- Private broker-to-GUI blocked-event telemetry over the existing privileged communication path.
+- Blocked-event reconstruction when the ordinary packet-capture path never receives a successfully blocked packet.
+- Direction-aware blocked-event insertion into Outbound/Inbound traffic views.
+- Persistent arrival-time policy-state snapshots for traffic history.
+- Expanded persisted traffic-history payload for richer iteration-modal data.
+- Expanded traffic-iteration popup columns with the applicable remote endpoint, Port, Flag, ID/name and Protocol.
+- SVG flag rendering inside the traffic-iteration popup.
+- Per-iteration ID/name retrieval rather than substituting only the current canonical identity.
+- Complete-row table viewport rendering.
+- Suppression of partial bottom rows until their complete row height fits.
+- Suppression of partially positioned top rows.
+- Row/item-aligned vertical scrolling for tables.
+- Complete-row Country tile rendering at the bottom of the viewport.
+- Country-page vertical reflow tied to the actual visible complete-tile area.
+- Settings cog at the top tab level.
+- Production release/update checking for newer public Semaphore releases.
+- Version-aware update comparison so only a genuinely newer release produces the normal update notification.
+- Custom release/update popup integrated with Semaphore's visual language.
+- Native rounded-region handling for custom popups/menus where required to eliminate square backing corners.
+- Native Windows title-bar move-loop integration for the custom title bar.
+- Native edge/corner resizing for all four edges and four corners.
+- Qt native `startSystemResize()` use with Win32 fallback where required.
+- Smaller practical minimum window geometry while preserving the normal larger startup size.
+- Persistent startup restoration for actual last usable window position/size/state.
+- Generated-ID/name refresh after restored policy/identity data becomes available.
+- Build-wrapper pause/inspect behavior for failed builds where applicable.
+- Validator support for the generated ASN organization resource/data path.
+- Qt 6.11.1-specific compile/validation repairs introduced by the new policy and viewport code.
+
+## Changed
+
+- Blacklist and Whitelist remain unified pages instead of retaining the temporary Absolute/Scoped split explored during v1.1.1 development.
+- Policy controls were reorganized around the unified table instead of a separate permanent right-side action panel.
+- Rule identity generation now describes all active policy dimensions instead of only the most recently edited field.
+- Legacy auto-generated IDs are recognized as generated values so they can be refreshed when rule scope changes.
+- Manual IDs are distinguished from generated IDs so editing policy scope does not overwrite deliberate user text.
+- Existing legacy Name/ID rules are migrated toward explicit editable address bounds instead of ambiguous `Any / Any` scope.
+- Legacy generic TCP/UDP history/policy values are migrated according to the row/rule address family where possible.
+- Protocols are represented individually instead of being grouped into broad TCP/UDP families.
+- Protocol matching differentiates address family where appropriate.
+- `None` is treated as a disabled match condition instead of an unrestricted selector.
+- Port matching uses the same normalized policy path as address, protocol and other rule dimensions.
+- Policy insertion from GUI actions now runs through the same deduplication/canonicalization path as persisted/startup policy.
+- Port policies are coalesced only when every non-Port scope dimension matches.
+- ID Filter values are maintained separately from the human-readable ID field.
+- Empty ID Filter selection/commit no longer writes `Unnamed`.
+- Selecting/editing an ID Filter without actually changing data no longer triggers unnecessary `setData()`, merge or WFP reconciliation work.
+- Otherwise-equivalent ID Filter rules merge by filter-set union rather than leaving duplicate policy rows.
+- Composite generated policy IDs update as Protocol, Port, Lane, Country or ID Filter scope changes.
+- Hover inspection is used to expose complete composite policy rather than forcing every scope value into the visible ID text.
+- Outbound table ordering was normalized around the blockable remote endpoint and associated policy metadata.
+- Inbound table ordering was normalized around the blockable remote endpoint and associated policy metadata.
+- Traffic-history iteration layouts were updated to place endpoint-specific data together and include richer metadata.
+- Traffic history format was advanced to carry the expanded iteration/policy snapshot data while retaining interpretation of older stored history.
+- Traffic-row red/green state now relies on recorded arrival-time policy snapshots for historical entries.
+- Current live state and historical state are resolved separately instead of repainting all previous traffic from today's policy.
+- WFP blocked-event direction is derived from the actual classify-drop/filter direction rather than an over-constrained transport-side comparison.
+- WFP drop telemetry is correlated only with Semaphore-owned filters.
+- Effective GUI block state is derived from normalized/current WFP policy rather than preserving retired ranges in a stale cache.
+- Whitelist/Allow display resolution uses the same specificity ordering as effective enforcement instead of treating any intersecting Allow rule as an override.
+- Mixed/partial policy coloring uses normalized address/protocol/Port/permit precedence.
+- First unblock action from historical red cells now creates the required Allow/Whitelist exception immediately.
+- Port/Protocol/ID policy-cell unblock actions follow the same first-action exception behavior.
+- Coalesced Port policies are respected during unblock so a historical Port cell does not immediately recreate the block it just removed.
+- Blacklist/Whitelist range coverage logic was aligned with the effective policy scope rather than treating every address intersection as equivalent.
+- Country-derived coverage participates in the same normalized effective policy system as other rules.
+- Country scrolling remains aligned to complete flag rows during wheel, arrow, page, thumb and resize interaction.
+- Country viewport rendering recalculates from the complete visible tile geometry.
+- Table viewport rendering changed from ordinary Qt partial-row painting to complete-row painting.
+- Table scrolling changed to item/row increments where required for complete-row guarantees.
+- Bottom-scroll behavior was adjusted so resizing/scrolling cannot leave clipped partial rows.
+- ID Filter editing remains functional under the custom delegates used for complete-row/policy rendering.
+- Monitor D&T / ID / Protocol badge rectangles shrink-wrap their actual text content.
+- Badge text uses adaptive font reduction where padding would otherwise create a new ellipsis.
+- Through badges use slightly smaller typography than the other monitor views for dense values.
+- Applicable empty values use a smooth diagonal line rather than the previous rigid empty-cell style.
+- The diagonal marker uses antialiasing, fractional cosmetic width and smooth cap/join behavior.
+- Empty Blacklist/Whitelist ID Filter cells remain blank.
+- Counter-bearing IP cells use ordinary ellipsis instead of a fade that obscures the address.
+- Counter text remains visible without adding a separate dark backing rectangle.
+- Full IP values remain available through hover tooltips when counters or narrow columns cause elision.
+- Window dragging uses the native Windows move operation rather than only custom manual geometry movement.
+- Window resizing uses native edge/corner behavior while retaining the custom frame.
+- The startup size remains large while the minimum size is lower, allowing inward resizing that v1.1.1 development builds initially prevented.
+- Title-bar hit testing was refined so movement does not consume button/control interaction.
+- Maximize, restore, double-click and Windows Snap behavior are preserved through the native movement/resizing path.
+- Actual last window placement is stored/restored instead of restoring to a generic center/default after tray use or resize.
+- Custom popup/menu geometry was changed to use an actual rounded native region where the backing HWND would otherwise reveal black square corners.
+- Release-check production behavior was simplified to notify only for an actually newer release.
+- Startup restoration orders policy, generated identities, window geometry and release checking so one does not overwrite another.
+- The main version identity/badge moved from v1.1 to v1.1.1.
+
+## Fixed
+
+- Public IPs remaining `Unnamed` even though a local ASN organization could identify them.
+- Generated organization identities not propagating consistently to other tables containing the same endpoint.
+- Automatically generated identities overriding a manual user identity.
+- Generic ASN organization labels being used where a more useful well-known/special-purpose network identity should take precedence.
+- Special-purpose IPv4/IPv6 traffic lacking meaningful local identification.
+- ASN generator/validator disagreement even when the generated runtime ASN database itself was valid.
+- Header/baseline declaration damage introduced during early organization-auto-name overlays.
+- Legacy generated IDs becoming indistinguishable from genuinely manual IDs.
+- Generated rule IDs changing to only the newest ID Filter and silently omitting existing Protocol/Port/Lane/Country scope.
+- Legacy Name/ID rules displaying ambiguous `Any / Any` address scope after migration.
+- Scoped policies being represented in the UI without equivalent enforcement state.
+- Scoped WFP filters not consistently contributing to the GUI's current blocked/allowed status.
+- Protocol/Port selector popup behavior and clipped custom checkbox/tick rendering.
+- `None` Protocol/Port values accidentally behaving like unrestricted rules.
+- Protocol-family grouping that prevented independently editable TCPv4/TCPv6 or UDPv4/UDPv6 policies.
+- Legacy protocol strings failing to migrate cleanly to family-specific values.
+- Duplicate policies created through different UI paths.
+- Adjacent/overlapping Port policies remaining unnecessarily fragmented.
+- Port-range merging that could discard or ignore non-Port scope if performed too aggressively.
+- First right-click/unblock action on historical blocked cells failing to create the needed Allow exception.
+- Historical Port `80` inside a coalesced `80-81` block immediately recreating Port `80` instead of remaining unblocked.
+- Port/Protocol/ID policy-cell actions using inconsistent unblock semantics.
+- Empty ID Filter fields being converted to `Unnamed`.
+- Shared ID/ID Filter editor behavior applying ID's empty-value rule to ID Filter.
+- Selection-only ID Filter interactions causing policy mutation/reconciliation.
+- Multiple otherwise-equivalent ID Filter policies remaining as duplicate rows instead of merging their filter values.
+- ID Filter editor inability to retain several simultaneous wildcard values cleanly.
+- Rule-summary hover omitting existing Protocol/Port/Lane/Country constraints after another filter was added.
+- Blacklist/Whitelist long address values having no reliable full-value tooltip when visually truncated.
+- Incorrect hard-coded tooltip column mapping after the policy table gained new columns.
+- Blocked traffic disappearing completely because WFP dropped it before the ordinary Packet Monitor path could observe it.
+- Broker drop telemetry accepting/handling events without sufficiently tying them to Semaphore-owned runtime filter IDs.
+- Race conditions between blocked-event telemetry and ordinary capture presentation.
+- Duplicate/incorrect blocked rows caused by overlapping telemetry paths.
+- Outbound blocked rows being filtered out by an incorrect direction comparison introduced by scoped-rule handling.
+- Inbound/Outbound direction derivation being too restrictive when the WFP classify-drop event and runtime filter direction were both relevant.
+- Blocked-query rows failing to remain visible/red even though enforcement itself was working.
+- Traffic-cell status using current policy alone and thereby repainting old observations incorrectly.
+- Historical rows turning red after a later Blacklist/Country change even though they were allowed when observed.
+- Historical rows turning green/red incorrectly after later Whitelist edits.
+- Missing persisted arrival-time policy state across restart.
+- Traffic-history popup payload lacking Flag, ID/name and Protocol information for individual iterations.
+- Expanded history payload being interpreted incorrectly by older stored-history layouts.
+- Country policy actions and traffic-cell colors disagreeing with effective policy.
+- Broad Allow rules producing a false mixed/purple state even when a more-specific Block wins.
+- Range coverage calculations treating partial/overlapping scope as a complete unconditional block.
+- GUI state remaining red after WFP had successfully retired the obsolete block rule.
+- Retired ranges being removed from a worker's confirmed set but then resurrected in the GUI `appliedRanges` cache.
+- `isIPBlocked()` returning true from stale cache state after network access had already been restored.
+- Critical WFP reconciliation paths failing to retire/update the intended scoped filter set correctly.
+- Rule retirement and subsequent GUI refresh reintroducing obsolete effective address coverage.
+- Modal traffic actions diverging from equivalent actions initiated in the main policy table.
+- Country and range actions failing to reuse the canonical policy normalization path.
+- Existing traffic not being marked/updated correctly when a newly applied policy attempted to cover it.
+- Compile failure from the missing/declaration-mismatched `markExistingTrafficAttemptBlock` path.
+- Custom title-bar dragging not entering a real native move loop.
+- Title-bar movement interfering with expected Snap/maximize/restore behavior.
+- Manual edge/corner resizing appearing broken because the startup size was also being used as the minimum size.
+- Edge/corner resize handling working once and then becoming unreliable because of stale border/input state.
+- Custom-frame hit testing preventing repeated resize operations.
+- Window placement restoring to the wrong position after tray/minimize/resize sequences.
+- Startup resize/placement logic overwriting the intended restored position.
+- Startup-generated IDs not refreshing after the supporting ASN/special-purpose data became ready.
+- Settings/cog startup state not being restored in the intended order.
+- Temporary release-check test state interacting with real release-tag suppression.
+- v1.1 being presented as an update over a v1.1.1 development build during release-check testing.
+- Release modal title/geometry inconsistencies introduced by test-mode styling.
+- Square black backing corners around visually rounded release/menu windows.
+- Popup/menu maximum viewport sizing leaving content clipped or misaligned.
+- Broker telemetry build/compile issues introduced by the WFP-drop IPC path.
+- Build command windows disappearing before a failure could be inspected in the wrapper workflow.
+- Partially visible table rows at the bottom of traffic/policy views.
+- Partially positioned rows at the top after pixel-style scrolling.
+- Mouse interaction targeting a row that was only partially visible.
+- Country flags being sliced at the bottom during manual scrolling or vertical resize.
+- Complete-row viewport code compile incompatibilities under Qt 6.11.1.
+- Bottom-scroll calculations leaving a clipped last row after a resize.
+- ID Filter editing breaking after the complete-row/custom delegate changes.
+- Protocol/Port rules failing to merge after edits that made their complete scope equivalent.
+- Port and Protocol rule merge paths failing to preserve the rest of the policy dimensions.
+- ID Filter selection turning an intentionally empty filter into `Unnamed`.
+- Policy ID text being rendered as a badge even though it needs ordinary editable text.
+- ID cells losing ordinary ellipsis/direct-edit behavior after badge delegates were introduced.
+- Protocol/Port badge overflow hiding additional values instead of retaining the `+N` behavior where applicable.
+- Monitor badges stretching across the entire cell instead of fitting their contents.
+- D&T/Protocol values becoming newly truncated solely because badge padding was added.
+- Through-table dense badge text touching/exceeding the badge contour.
+- Empty policy/monitor cells using an overly rigid line instead of a smooth diagonal marker.
+- Empty ID Filter cells receiving the diagonal marker even though blank is semantically clearer.
+- Counter-bearing IP cells using a fade that unnecessarily obscured otherwise readable address text.
+- Counter/address tooltips failing to expose the complete elided value consistently.
+- Stale source/validator warnings and compile mismatches introduced during successive v1.1.1 overlays.
+
+## Removed / stripped
+
+- Dependence on an online ISP/organization lookup service for automatic endpoint identification.
+- Need to issue a network request for every new public address merely to obtain an organization name.
+- Temporary Absolute/Scoped Blacklist/Whitelist page split explored during early v1.1.1 policy development.
+- Temporary permanent right-side policy action-panel concept after the unified policy-table design was adopted.
+- Broad protocol grouping that hid individual protocol/family identities.
+- Treating `None` as equivalent to `Any`.
+- Duplicate policy insertion paths that bypassed canonical normalization.
+- Redundant exact duplicate rules.
+- Redundant compatible Port fragments after Port-range coalescing.
+- Coupling of the human-readable ID field to ID Filter's empty-value behavior.
+- Automatic conversion of an empty ID Filter to `Unnamed`.
+- Single-value limitation for ID Filters.
+- Requirement to inspect only a generated ID string to understand a composite rule.
+- Assumption that any intersecting Allow rule necessarily creates a partial/mixed state.
+- Requirement for a second unblock attempt when the first action should create a Whitelist exception.
+- Dependence on ordinary packet capture as the only way to display traffic blocked by Semaphore.
+- Stale retired-rule entries in the GUI's applied-range cache.
+- Pixel/partial-row table presentation at viewport boundaries.
+- Partial Country flag rows at the bottom of the viewport.
+- Full-cell-width monitor badge backgrounds.
+- Fade-based address truncation in counter-bearing cells.
+- Diagonal empty marker from the ID Filter field.
+- Temporary release-check test shortcuts/modes used during v1.1.1 development.
+- Temporary development/update-state labels that are not part of normal stable-release behavior.
+- Square native backing corners around rounded custom release/menu surfaces.
+
+## Preserved
+
+- Driverless Windows Packet Monitor capture architecture.
+- Direct Windows Filtering Platform hard-block enforcement.
+- Non-elevated Qt GUI / elevated broker privilege separation.
+- Private IPC between GUI and privileged networking component.
+- WFP/Packet Monitor duplicate-correlation architecture.
+- Existing live Outbound, Inbound and Through table model.
+- Existing bounded live-traffic presentation/history policy where applicable.
+- Unlimited Blacklist/Whitelist table presentation introduced in v1.1.
+- v1.1 large-list numeric sorting/merging optimizations.
+- v1.1 batched list materialization and table-item reuse.
+- v1.1 durable blacklist import checkpoints and restart recovery.
+- Preservation of original imported blocklist sources.
+- Detailed parse → optimize → materialize → save → WFP progress reporting.
+- Bounded/background WFP reconciliation.
+- Priority handling for interactive policy changes.
+- Stale-operation invalidation and retry handling.
+- Safe delete/purge behavior while reconciliation is active.
+- IPv4 and IPv6 support.
+- Local GeoIP city/country lookup architecture.
+- Embedded/vector country flag architecture.
+- Native flag aspect ratios.
+- Country-based policy.
+- Whitelist precedence/exception capability.
+- Persistent Semaphore state under Local AppData.
+- Repeated-address counters and per-event history.
+- Saved manual endpoint identities.
+- Complete clipboard export behavior introduced in v1.1.
+- High-rate capture/accounting decoupled from bounded GUI painting.
+- Custom Semaphore title bar.
+- Windows Snap, maximize and restore behavior.
+- System-tray operation.
+- Qt 6.11.1 portable Windows build target.
+
+---
+
+# Semaphore v1.1 — Exhaustive changes since v1
+
+This changelog is intentionally exhaustive for the v1 → v1.1 development cycle.
+
+## Added
+
+- Unlimited Blacklist/Whitelist table presentation.
+- Dynamic list `#` column width based on final row count.
+- Flag column between Name and First IP Range in Blacklist and Whitelist.
+- Exact full-range GeoIP flag classification.
+- List flag hover tooltips.
+- Country-row wheel snapping.
+- Complete column/selection clipboard export.
+- Detailed second-pass WFP progress reporting.
+- Persistent large-blacklist import checkpoints.
+- Persistent parse byte offsets and parsed-range state.
+- Persistent optimization-complete state.
+- Persistent materialization row cursor.
+- Persistent WFP confirmed-range recovery state.
+- Startup reconstruction of the bottom import/progress surface.
+- Persistent import state under `%LOCALAPPDATA%\Semaphore\blacklist\import-resume\`.
+- Migration support for compatible older runtime-located import checkpoints.
+- Defensive preservation copy for a selected blacklist source.
+- Adaptive zero-delay capture presentation queue.
+- Single-pending-event GUI drain scheduling.
+- Bounded GUI drain time budget under packet bursts.
+- Coalesced repeated traffic presentation updates.
+- Additional Windows icon size frames.
+- Visible `v1.1` version badge.
+
+## Changed
+
+- Large-list sorting precomputes numeric IPv4 keys.
+- Range merge paths reduce unnecessary copying.
+- Import vectors reserve capacity based on source size.
+- List materialization reuses existing table items where possible.
+- List materialization runs in bounded batches.
+- Whitelist uses the same large-table optimizations.
+- List row layout uses fixed geometry and no word wrapping.
+- Blacklist/Whitelist use 40 px rows.
+- Through is restored to 24 px rows.
+- Outbound stretches Destination + Name.
+- Inbound stretches Origin + Name.
+- Through stretches Origin + Destination.
+- Tray width follows actual content more closely.
+- Country scrolling advances by complete flag rows.
+- Import progress covers parse → optimize → materialize → save → WFP.
+- WFP retries/reconciliation remain visible in the progress surface.
+- Import source is treated as read-only and preserved.
+- Capture ingestion is immediate while GUI painting is adaptive.
+- Packet-history hot-path handling avoids repeated complete decode/re-encode.
+- Import source unavailability pauses instead of discarding the transaction.
+- Startup restores progress synchronously.
+- Version identity moved from v1 to v1.1.
+- Application icon has higher contrast/definition and improved small-size presentation.
+
+## Fixed
+
+- Blacklist/Whitelist totals diverging from a 999-row truncated table.
+- Massive-list performance degradation caused by repeated address parsing and table churn.
+- Progress appearing stuck during list optimization.
+- List contents appearing in one sudden final strike without meaningful intermediate progress.
+- Blocked-country flags receiving an unwanted yellow outline.
+- Outbound/Inbound Name columns failing to stretch.
+- Source blacklist files disappearing after import.
+- List row-number column clipping large row counts.
+- WFP policy application running without bottom progress feedback.
+- Missing flag tooltips in list tables.
+- Incorrect expectation that every large range should receive a flag.
+- Through row height being enlarged unnecessarily.
+- Clipboard copying only a partial/single cell instead of the complete selected area.
+- Real-time capture being artificially restricted by a 500 ms repeated-flow throttle.
+- GUI lockups after removing that throttle by separating capture/accounting from rendering.
+- Per-packet queued-event flooding under download-level packet rates.
+- Interrupted large blacklist loads restarting from the beginning.
+- Startup failing to restore the bottom progress bar for an interrupted import.
+- Import checkpoints being stored inside the disposable/versioned runtime cache.
+- Checkpoints being discarded when the original source was temporarily unavailable.
+- Materialization progress moving backward after restart.
+- WFP recovery temporarily regressing to the materialization phase.
+- GUI header/source declaration mismatches introduced during iterative patching.
+- `optimizeNamedRanges` 2-argument/3-argument declaration mismatch.
+- Qt 6.11 mixed-type `qBound()` overload ambiguity.
+
+## Removed / stripped
+
+- 999-row Blacklist/Whitelist view cap.
+- Yellow blocked-country flag border.
+- 500 ms repeated `source|destination` display throttle.
+- Repeated IPv4 string parsing from the sort comparator.
+- Unnecessary full list-cell reconstruction where cells can be reused.
+- Unnecessary list word wrapping.
+- Unbounded/per-packet Qt presentation event pressure.
+- Repeated full history decode/re-encode in the unrestricted capture hot path.
+- Session-only large-import recovery.
+- Runtime-cache location for durable import checkpoints.
+- Silent deletion of a valid checkpoint on temporary source unavailability.
+- Missing-progress gap between list construction and WFP application.
+- Excess tray-menu horizontal padding.
+
+## Preserved
+
+- Driverless Windows Packet Monitor capture architecture.
+- Direct Windows Filtering Platform hard-block enforcement.
+- Non-elevated Qt GUI / elevated broker privilege separation.
+- WFP/Packet Monitor duplicate correlation.
+- Existing 999-row policy for the live traffic tables.
+- Existing blacklist desired-policy vs confirmed-effective-policy distinction.
+- Existing GeoIP/embedded vector flag architecture.
+- Native flag aspect ratios.
+- Existing persistent Semaphore state under Local AppData.
