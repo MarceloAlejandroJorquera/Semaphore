@@ -71,6 +71,7 @@ This changelog is intentionally exhaustive for the v1.1 → v1.1.1 development c
 - Country-page vertical reflow tied to the actual visible complete-tile area.
 - Settings cog at the top tab level.
 - Production release/update checking for newer public Semaphore releases.
+- Variable-depth numeric release-version comparison for zero-free hierarchical tags such as `v1.1.1.1`.
 - Version-aware update comparison so only a genuinely newer release produces the normal update notification.
 - Custom release/update popup integrated with Semaphore's visual language.
 - Native rounded-region handling for custom popups/menus where required to eliminate square backing corners.
@@ -146,6 +147,7 @@ This changelog is intentionally exhaustive for the v1.1 → v1.1.1 development c
 - Release-check production behavior was simplified to notify only for an actually newer release.
 - Startup restoration orders policy, generated identities, window geometry and release checking so one does not overwrite another.
 - The main version identity/badge moved from v1.1 to v1.1.1.
+- Public version numbering follows the zero-free hierarchy `v1 → v1.1 → v1.1.1 → v1.1.1.1 … v1.1.1.9 → v1.1.2`, omitting zero-valued components.
 
 ## Fixed
 

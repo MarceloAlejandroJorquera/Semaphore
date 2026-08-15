@@ -80,6 +80,8 @@ v1.1.1 builds on the performance and large-list work delivered in v1.1 and subst
 
 For the complete v1.1 → v1.1.1 development record, see **[CHANGELOG.md](CHANGELOG.md)**.
 
+For security reporting and support policy, see **[SECURITY.md](SECURITY.md)**.
+
 ---
 
 # Features
@@ -183,7 +185,7 @@ Simple address/range rules therefore remain simple, while more specific policy c
 
 ### Rule normalization
 
-Semaphore normalizes policy created from the Lists pages, live traffic tables, history popups, startup restoration and rule editing.
+Semaphore normalizes policy created from the **Lists / policy** area, live traffic tables, history popups, startup restoration and rule editing.
 
 Where policy scope is genuinely equivalent, Semaphore can:
 
@@ -285,7 +287,7 @@ Generated identities can be refreshed across tables when the canonical identity 
 
 Blockable traffic cells can be acted upon directly.
 
-Policy actions use the same normalized policy path as the Lists pages, so a block/unblock made from a traffic row or history popup does not create a separate incompatible rule format.
+Policy actions use the same normalized policy path as the **Lists / policy** area, so a block/unblock made from a traffic row or history popup does not create a separate incompatible rule format.
 
 Whitelist exceptions are used when an endpoint must remain allowed while a broader deny policy still exists.
 
@@ -512,7 +514,7 @@ Semaphore can check the GitHub Releases feed for a newer stable version.
 
 - Only a genuinely newer public release is presented as an update.
 - Older public releases are not shown as updates to a newer running build.
-- Temporary v1.1.1 development/test release-check modes are not part of the production behavior.
+- Version comparison supports Semaphore's variable-depth, zero-free release numbering.
 
 ---
 
@@ -590,10 +592,10 @@ No traditional installer is required.
 2. Approve the required Windows privilege elevation when requested.
 3. Observe live traffic in **Outbound**, **Inbound** and **Through**.
 4. Inspect Flag, ID and Protocol information for remote endpoints.
-5. Use traffic actions or **Lists → Blacklist** to create deny policy.
-6. Use **Lists → Whitelist** for explicit exceptions.
+5. Open the **Lists / policy** tab (three-line glyph), then use **Blacklist** to create deny policy.
+6. Use **Whitelist** in the same policy area for explicit exceptions.
 7. Use Protocol, Port, Lane and ID Filter fields when a rule needs narrower scope.
-8. Use **Country** for country-derived policy.
+8. Use **Country** in the policy area for country-derived policy.
 9. Double-click an eligible repeated-address counter to inspect its individual events.
 10. Use the settings cog for application settings and release checking.
 
@@ -726,9 +728,9 @@ To update a portable Semaphore installation:
 
 Persistent application data is maintained separately from the portable executable where applicable.
 
-Semaphore uses compact hierarchical version numbering and omits zero-valued components.
+Semaphore uses **zero-free hierarchical version numbering**.
 
-Successive maintenance releases can extend the current version with an additional component before the preceding component advances:
+A component is written only when it is non-zero. Maintenance revisions extend the current version from `.1` through `.9`; after `.9`, the preceding component advances rather than introducing `.0`.
 
 ```text
 v1
@@ -749,7 +751,7 @@ v1.1.2.2
 ...
 ```
 
-Zero components are not written; for example, Semaphore uses `v1.1.1` rather than `v1.1.1.0`.
+Zero components are omitted: for example, `v1.1.1` is used instead of `v1.1.1.0`.
 
 ---
 
@@ -771,6 +773,8 @@ can interrupt required network connectivity.
 When applying broad policies, confirm that important infrastructure and management endpoints remain reachable.
 
 Use Whitelist entries when explicit exceptions are required.
+
+For vulnerability reporting, supported-version policy and disclosure guidance, see **[SECURITY.md](SECURITY.md)**.
 
 ---
 
