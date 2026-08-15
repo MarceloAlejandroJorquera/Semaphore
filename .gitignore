@@ -48,6 +48,14 @@ obj/
 *.exe
 *.msi
 
+# Release/package artifacts
+# Publish these through GitHub Releases rather than the repository tree.
+SHA256SUMS.txt
+*.sha256
+*.sha256.txt
+*.zip
+*.7z
+
 # Generated Qt files
 Makefile*
 moc_*
