@@ -1,22 +1,21 @@
 # Semaphore
 
 <p align="center">
-  <img width="1672" height="780" alt="Screenshot_779" src="https://github.com/user-attachments/assets/deda3a98-56e4-49ae-ba40-8fe8b0e78707" />
+  <img width="1734" height="782" alt="Screenshot_894" src="https://github.com/user-attachments/assets/deb3721c-0c18-40d3-a108-15ba90c0397a" />
 </p>
-
 
 <p align="center">
   <strong>Real-time Windows network visibility and firewall control.</strong>
 </p>
 
 <p align="center">
-  Monitor live inbound, outbound and transit traffic, inspect its geographic origin,
-  and apply IP, range or country-level network policy directly from the interface.
+  Monitor live inbound, outbound and transit traffic, identify remote endpoints locally,
+  and apply address, range, country, protocol, port and scoped network policy directly from the interface.
 </p>
 
 <p align="center">
-  <a href="https://github.com/MarceloAlejandroJorquera/Semaphore/releases/latest"><img src="https://img.shields.io/badge/Release-v1.1-blue" alt="Release v1.1"></a>
-  <a href="#whats-new-in-semaphore-v11"><img src="https://img.shields.io/badge/Status-Stable-brightgreen" alt="Stable"></a>
+  <a href="https://github.com/MarceloAlejandroJorquera/Semaphore/releases/latest"><img src="https://img.shields.io/badge/Release-v1.1.1-blue" alt="Release v1.1.1"></a>
+  <a href="#whats-new-in-semaphore-v111"><img src="https://img.shields.io/badge/Status-Stable-brightgreen" alt="Stable"></a>
   <a href="#system-requirements"><img src="https://img.shields.io/badge/Platform-Windows%20x64-blue" alt="Windows x64"></a>
   <a href="#system-requirements"><img src="https://img.shields.io/badge/Qt-6.11.1-green" alt="Qt 6.11.1"></a>
   <a href="#native-windows-packet-capture"><img src="https://img.shields.io/badge/Capture-Windows%20Packet%20Monitor-blueviolet" alt="Windows Packet Monitor"></a>
@@ -27,50 +26,59 @@
 
 ## Overview
 
-**Semaphore** is a native Windows network monitoring and firewall-control application built for real-time connection visibility and direct policy management.
+**Semaphore** is a native Windows network monitoring and firewall-control application built for real-time traffic visibility and direct policy management.
 
 It combines:
 
-- live Windows network traffic monitoring;
-- direct Windows Filtering Platform enforcement;
+- live **Outbound**, **Inbound** and **Through** traffic monitoring;
+- direct **Windows Filtering Platform (WFP)** enforcement;
+- driverless capture through **Windows Packet Monitor**;
 - IPv4 and IPv6 support;
-- persistent blacklists and whitelists;
-- country-level network blocking;
-- local GeoIP and country-flag information;
-- address naming and repeated-address tracking;
-- large blocklist and range management;
+- persistent Blacklist and Whitelist policy;
+- country-level policy;
+- Lane/direction, Protocol, Port and ID Filter scoping;
+- local GeoIP, country-flag and ASN organization information;
+- automatic endpoint identification without an online lookup service;
+- repeated-address counters and per-event history;
+- large blocklist/range management;
+- release checking;
 - system-tray operation;
-- a compact, traffic-focused Qt interface.
+- a compact Qt interface designed for high-rate traffic.
 
-Semaphore is designed for users who want to see **where their system is communicating, what is communicating with it, and immediately control those connections** without installing a third-party packet-capture driver.
+Semaphore is intended for users who want to see **where their system is communicating, what is communicating with it, and immediately control those connections** without installing a third-party packet-capture driver.
 
 ---
 
-## What's new in Semaphore v1.1
+## What's new in Semaphore v1.1.1
 
-**Semaphore v1.1 is the current stable release.**
+**Semaphore v1.1.1 is the current stable release.**
 
-v1.1 builds on the driverless Packet Monitor + Windows Filtering Platform architecture introduced in v1 and focuses on high-rate capture responsiveness, large-policy scalability, durable import recovery, list visualization, and interface polish.
+v1.1.1 builds on the performance and large-list work delivered in v1.1 and substantially expands Semaphore's endpoint identification, policy model, WFP enforcement, blocked-traffic visibility and user interface.
 
-### Major changes since v1
+### Major changes since v1.1
 
-- Removed the **999-row limit from Blacklist and Whitelist** views; live traffic tables retain their bounded presentation model.
-- Reworked large-list processing with faster range sorting/merging, batched table materialization, item reuse, dynamic `#` column sizing, and detailed progress feedback.
-- Added **durable blacklist import recovery**. Interrupted large imports preserve parsing, optimization, materialization, and WFP reconciliation progress across restarts.
-- Restored the bottom progress surface at startup whenever an unfinished blacklist transaction is resumed.
-- Preserved the original imported blacklist file instead of consuming or removing it.
-- Added a **Flag** column to Blacklist and Whitelist between Name and First IP Range.
-- Added exact full-range GeoIP classification: a list flag is shown only when the complete range resolves unambiguously to one flag.
-- Added flag hover tooltips in Lists; mixed or geographically ambiguous ranges intentionally remain blank.
-- Removed the former 500 ms repeated-flow display throttle so capture accounting can operate in effectively **real time**.
-- Added adaptive GUI backpressure so high packet rates are coalesced and drained with a bounded event-loop budget instead of freezing the interface.
-- Restored native stretch behavior for the Outbound and Inbound **Name** columns.
-- Added complete clipboard export for selected columns and multi-cell table selections.
-- Restored the compact Through-table row height while retaining 40 px flag-capable rows where required.
-- Improved country-page row scrolling, tray-menu sizing, icon clarity, and general table geometry.
-- Updated the visible application version badge to **v1.1**.
-- Retained direct **Windows Filtering Platform (WFP)** enforcement, country blocking, local GeoIP/vector flags, IPv4/IPv6 support, persistent policy state, and the driverless Windows Packet Monitor capture architecture.
+- Added **local ASN organization identification** for public IP addresses using packaged MaxMind ASN data.
+- Added built-in identification for **well-known and special-purpose IPv4/IPv6 ranges**, including applicable multicast and local-scope traffic.
+- Added deterministic endpoint-ID precedence: **manual ID/name → special-purpose identity → ASN organization → Unnamed**.
+- Expanded Blacklist and Whitelist into a **unified policy model** capable of combining address/range, Lane/direction, Protocol, Port, Country and ID Filter constraints.
+- Added individual protocol selection with separate IPv4/IPv6 protocol identities where applicable.
+- Added explicit `Any` and `None` policy states; `None` is a disabled/non-matching condition rather than a wildcard.
+- Added **multi-value ID Filters** with `*` and `?` wildcard support and OR semantics.
+- Added policy normalization, duplicate collapse, compatible range merging and compatible Port-range coalescing.
+- Added a complete **policy-summary hover** so composite rules can be inspected as badges without relying on a shortened generated ID.
+- Improved Whitelist exception behavior and first-action unblock handling for historical blocked cells.
+- Added **WFP classify-drop telemetry** so traffic successfully blocked before the normal capture path can still appear as a blocked event.
+- Corrected blocked-event Outbound/Inbound direction classification.
+- Hardened WFP reconciliation and removed stale effective-block state after successfully retired rules.
+- Expanded traffic-history snapshots so historical rows preserve the policy state that existed when each event arrived.
+- Expanded traffic iteration popups with the endpoint, port, flag, ID/name and protocol information relevant to each recorded event.
+- Added compact badge rendering for policy values and monitor-table D&T / ID / Protocol values.
+- Added complete-row viewport rendering so partially visible rows and country tiles are not painted.
+- Added native Windows title-bar dragging, edge/corner resizing and improved Snap/maximize/restore behavior for the custom-framed window.
+- Added a compact **settings cog** and production release checking.
+- Improved startup restoration, generated-ID refresh, window placement, counter rendering, tooltips and numerous Qt 6.11.1 edge cases.
 
+For the complete v1.1 → v1.1.1 development record, see **[CHANGELOG.md](CHANGELOG.md)**.
 
 ---
 
@@ -82,7 +90,7 @@ Semaphore separates observed traffic into three live views:
 
 ### Outbound
 
-Connections originating from the local system and communicating with remote endpoints.
+Traffic originating from the local system and communicating with remote endpoints.
 
 ### Inbound
 
@@ -90,25 +98,21 @@ Traffic arriving at the local system from remote endpoints.
 
 ### Through
 
-Forwarded or transit traffic observed by the capture backend that is not represented as an ordinary local inbound or outbound connection.
+Forwarded, transit or otherwise non-local traffic observed by the capture backend.
 
-Each traffic table can display information including:
+Traffic tables can display information including:
 
 - event sequence;
 - date and time;
-- origin address;
-- destination address;
+- origin and destination addresses;
 - source and destination ports;
 - protocol;
 - country flag;
-- geographic information;
-- saved address names;
+- endpoint ID/name;
 - repeated-address counters;
 - current allowed/blocked state.
 
-Traffic information is updated continuously while monitoring is active.
-
-v1.1 keeps packet ingestion and accounting effectively real time while decoupling high-rate capture from Qt table painting. Presentation updates are coalesced and drained with bounded GUI work, preventing heavy downloads or packet bursts from monopolizing the interface.
+Packet ingestion and accounting remain decoupled from Qt painting so high-rate traffic does not require one GUI event per packet.
 
 ---
 
@@ -118,7 +122,7 @@ Semaphore uses the packet-monitoring facilities provided by Windows.
 
 ### No third-party capture driver required
 
-Semaphore v1.1 does **not** require:
+Semaphore v1.1.1 does **not** require:
 
 - Npcap;
 - WinPcap;
@@ -126,194 +130,322 @@ Semaphore v1.1 does **not** require:
 - a Semaphore kernel capture driver;
 - test-signing mode.
 
-This substantially simplifies deployment compared with earlier Semaphore versions.
-
-Privileged capture and firewall operations are isolated from the normal graphical interface and invoked only where Windows requires elevated privileges.
+Privileged capture and firewall operations are isolated from the normal graphical interface and invoked only where Windows requires elevation.
 
 ---
 
 ## Windows Filtering Platform firewall
 
-Semaphore applies network restrictions directly through the **Windows Filtering Platform (WFP)**.
+Semaphore applies active restrictions through the **Windows Filtering Platform (WFP)**.
 
-Supported policy operations include:
+The policy engine supports:
 
-- blocking individual IPv4 addresses;
-- blocking individual IPv6 addresses;
-- blocking IPv4 and IPv6 ranges;
-- persistent blacklist policies;
-- whitelist exceptions;
-- country-based policies;
+- individual IPv4 and IPv6 addresses;
+- IPv4 and IPv6 ranges;
+- CIDR networks;
+- persistent Blacklist rules;
+- Whitelist exceptions;
+- country-derived coverage;
+- Lane/direction scoping;
+- Protocol constraints;
+- Port constraints and compatible Port ranges;
+- ID Filter constraints;
 - live block/unblock operations;
-- policy reconciliation;
-- policy purge.
+- background policy reconciliation;
+- safe policy retirement and purge.
 
-This gives Semaphore direct control over active network filtering without depending on manually generated Windows Defender Firewall rules.
+Semaphore distinguishes **desired policy**, **confirmed effective WFP coverage** and the policy snapshot associated with recorded traffic.
+
+### Blocked-traffic visibility
+
+Semaphore's elevated broker can report classify-drop events produced by Semaphore-owned WFP filters.
+
+That means a connection that is blocked before it reaches the ordinary packet-capture path can still be represented in the relevant traffic table as a blocked event.
+
+---
+
+## Unified policy model
+
+Blacklist and Whitelist use one policy-table model rather than separate "absolute" and "scoped" pages.
+
+A rule can combine applicable values from:
+
+- **ID**
+- **ID Filter**
+- **Lane**
+- **First IP Range**
+- **Last IP Range**
+- **Flag / Country**
+- **Proto**
+- **Port**
+
+Simple address/range rules therefore remain simple, while more specific policy can be represented without creating a separate subsystem.
+
+### Rule normalization
+
+Semaphore normalizes policy created from the Lists pages, live traffic tables, history popups, startup restoration and rule editing.
+
+Where policy scope is genuinely equivalent, Semaphore can:
+
+- collapse exact duplicates;
+- merge compatible address coverage;
+- coalesce adjacent/overlapping Port ranges;
+- merge compatible ID Filter sets.
+
+Rules with materially different scope remain independent.
+
+---
+
+## Protocol and Port policy
+
+Protocol selection exposes individual protocol identities rather than collapsing everything into broad groups.
+
+Where applicable, address-family-specific identities remain distinct, for example:
+
+- TCPv4 / TCPv6;
+- UDPv4 / UDPv6.
+
+Legacy generic protocol values are migrated according to the associated address family when possible.
+
+Special selector values behave explicitly:
+
+- **Any** — no constraint for that dimension;
+- **None** — disabled/non-matching condition.
+
+Port policy can target individual ports or compatible ranges. Adjacent/overlapping Port ranges coalesce only when every other policy dimension is equivalent.
+
+---
+
+## ID and ID Filter
+
+### ID
+
+The **ID** field is the human-readable identity associated with an endpoint or policy.
+
+Manual IDs remain user-controlled.
+
+For automatically generated identities, Semaphore can use local special-purpose and ASN information.
+
+### ID Filter
+
+**ID Filter** is a separate matching dimension.
+
+It supports:
+
+- `*` wildcard matching;
+- `?` single-character wildcard matching;
+- multiple simultaneous filter values;
+- OR semantics between values;
+- removable badge editing;
+- compact scrolling for larger filter sets.
+
+An empty ID Filter remains empty and does not become `Unnamed`.
+
+---
+
+## Automatic endpoint identification
+
+Semaphore can identify many endpoints without an online address-lookup service.
+
+### Naming/ID precedence
+
+Automatic identity follows this precedence:
+
+1. manually assigned ID/name;
+2. recognized well-known or special-purpose identity;
+3. ASN organization;
+4. `Unnamed`.
+
+Manual user values therefore remain authoritative.
+
+### ASN organization lookup
+
+Public addresses can be mapped to the organization associated with their autonomous system using a compact local ASN database generated from MaxMind GeoLite2 ASN data.
+
+This can automatically identify organizations such as major network, cloud, CDN and service providers when the packaged ASN data contains the address.
+
+### Special-purpose addressing
+
+Semaphore also recognizes applicable well-known or special-purpose IPv4/IPv6 traffic so a generic ASN name is not used where a more useful local identity exists.
+
+The classification covers applicable categories such as:
+
+- multicast;
+- link-local traffic;
+- loopback/local addressing;
+- well-known multicast services;
+- scoped IPv6 multicast;
+- other recognized special-purpose ranges.
+
+Generated identities can be refreshed across tables when the canonical identity for an address changes.
 
 ---
 
 ## Direct traffic control
 
-Blockable address cells in the live traffic tables can be acted upon directly.
+Blockable traffic cells can be acted upon directly.
 
-Semaphore distinguishes between:
+Policy actions use the same normalized policy path as the Lists pages, so a block/unblock made from a traffic row or history popup does not create a separate incompatible rule format.
 
-- allowed traffic;
-- blocked addresses;
-- blacklist policy;
-- whitelist exceptions;
-- country policy;
-- confirmed active WFP coverage.
+Whitelist exceptions are used when an endpoint must remain allowed while a broader deny policy still exists.
 
-This prevents historical traffic from being incorrectly recolored simply because a matching address or country was blocked later.
+Historical traffic is not indiscriminately recolored by later policy changes; recorded policy state is retained per event.
 
 ---
 
 ## Repeated-address tracking
 
-Repeated network activity involving the same address can be condensed into a counter while retaining its individual observations.
+Repeated activity involving the same blockable endpoint can be condensed into a counter while retaining the underlying observations.
 
-For counter-bearing addresses, Semaphore stores the underlying iterations including applicable:
-
-- sequence number;
-- date and time;
-- address;
-- source/destination port information.
+The counter display preserves the IP text, uses ordinary ellipsis when necessary and exposes the complete value through tooltips.
 
 Double-clicking an eligible counter-bearing address opens a compact history popup.
 
-The history viewer:
+Depending on the traffic direction, history rows can include:
 
-- has no conventional title bar;
+- sequence number;
+- date and time;
+- remote endpoint;
+- Port;
+- Flag;
+- ID/name;
+- Protocol.
+
+The history popup:
+
 - is centered over Semaphore;
-- displays up to **7 rows** at once;
-- automatically provides scrolling when more rows exist;
-- closes by clicking outside the popup.
+- displays a compact number of rows;
+- scrolls when additional iterations exist;
+- closes without adding a conventional application window.
 
 ---
 
 ## Blacklist
 
-The Blacklist view manages persistent network-deny policy.
+The Blacklist manages persistent deny policy.
 
-Supported entries include:
+Supported address inputs include:
 
 - single IPv4 addresses;
 - single IPv6 addresses;
 - address ranges;
 - CIDR networks;
+- named ranges;
 - imported blocklists;
-- large collections of ranges.
+- very large range collections.
 
-Semaphore automatically normalizes policy data and handles overlapping or adjacent ranges where appropriate.
-
-Blacklist and Whitelist rows also include a local GeoIP **Flag** column. Semaphore only paints a flag when the complete stored range resolves to one unambiguous flag classification; mixed or geographically ambiguous ranges are intentionally left blank rather than displaying misleading information.
+The table also exposes the additional policy dimensions introduced in v1.1.1.
 
 ### Large-list handling
 
-The current policy engine is designed to remain responsive while processing very large blocklists.
-
-It includes:
+Semaphore retains the v1.1 large-policy architecture:
 
 - unlimited Blacklist/Whitelist table presentation;
-- faster numeric IPv4 range sorting and merging;
-- batched table materialization and table-item reuse;
-- automatic `#` column sizing for large row counts;
-- progressive parsing, optimization, materialization and WFP-application feedback;
-- persistent import checkpoints under `%LOCALAPPDATA%\Semaphore\blacklist\import-resume\`;
-- restart recovery for interrupted parsing, optimization, materialization and WFP reconciliation;
-- preservation of the original source list during import;
+- numeric IPv4 range sorting and merging;
+- batched table materialization and item reuse;
+- dynamic `#` column sizing;
+- progressive parse → optimize → materialize → save → WFP feedback;
+- durable import checkpoints under `%LOCALAPPDATA%\Semaphore\blacklist\import-resume\`;
+- restart recovery for interrupted work;
+- preservation of the original imported source file;
 - bounded WFP transactions;
 - background reconciliation;
-- priority handling for interactive changes;
+- priority for interactive policy changes;
 - stale-operation invalidation;
 - retry handling for transient failures;
-- safe deletion while reconciliation is active;
-- safe purge behavior.
+- safe deletion and purge while reconciliation is active.
 
 ---
 
 ## Whitelist
 
-The Whitelist provides explicit address exceptions.
+Whitelist rules provide explicit Allow exceptions.
 
-Whitelisted endpoints can remain allowed even when broader blocking policy exists through a blacklist, range or country rule.
+A Whitelist entry can remain effective inside broader Blacklist or Country policy according to the final normalized policy scope and WFP precedence rules.
 
-This allows a broad policy to remain intact while making selected exceptions without deleting the underlying source rule.
+Unblock actions from historical red traffic create the required exception on the first applicable action instead of requiring a second attempt.
 
 ---
 
-## Country blocking
+## Country policy
 
-Semaphore can control network policy geographically using its local GeoIP resources.
+Semaphore can derive network policy from its local GeoIP country data.
 
-The **Country** view displays countries visually in two groups:
-
-- **Allowed**
-- **Blocked**
-
-Clicking a country moves it between the two policy states.
-
-Semaphore then translates that country policy into the applicable address coverage and reconciles it with the active Windows Filtering Platform configuration.
+Country policy is expanded locally into the applicable address coverage and reconciled with the same effective policy system used by Blacklist and Whitelist.
 
 ### Country flags
 
-Country flags are rendered from high-quality vector resources.
+Flags are rendered from vector resources while preserving native proportions, including unusually proportioned flags.
 
-Semaphore preserves native flag proportions rather than forcing every flag into a uniform aspect ratio, including unusually proportioned flags such as Qatar and Nepal.
+Country scrolling and resizing use complete tile rows so a final partial flag row is not painted at the viewport boundary.
 
 ---
 
-## GeoIP information
+## GeoIP and ASN information
 
-Semaphore integrates local GeoIP information directly into the traffic interface.
+Semaphore packages its geographic and network-organization data for local use.
 
-Depending on the available data for an address, Semaphore can display:
+Depending on the available information, Semaphore can use:
 
 - country;
 - city;
-- country flag.
+- country flag;
+- ASN organization;
+- special-purpose address classification.
 
-Hover information provides geographic context without requiring a remote lookup service.
-
-GeoIP resources are processed and packaged for efficient local use.
-
----
-
-## Address naming
-
-Frequently encountered addresses can be assigned a custom name.
-
-Names:
-
-- appear directly in the traffic tables;
-- persist between sessions;
-- remain independent from the current table contents;
-- are not removed when traffic history is cleared.
-
-This makes recurring infrastructure, servers and endpoints easier to identify at a glance.
+GeoIP/ASN identification does not require a per-address remote lookup API.
 
 ---
 
-## Traffic-table management
+## Traffic and policy table presentation
 
-Each live traffic table includes a dedicated clear control.
+v1.1.1 adds a more compact visual language for structured values.
 
-Semaphore also provides a global clear control for:
+### Badges
 
-- Outbound;
-- Inbound;
-- Through.
+Applicable values are rendered as content-sized badges, including:
 
-Clearing traffic resets the relevant visible history and sequence counters without deleting saved address names or firewall policy.
+- monitor-table D&T;
+- monitor-table ID;
+- monitor-table Protocol;
+- policy ID Filter values;
+- policy Protocol values;
+- policy Port values;
+- policy-summary hover values.
 
-Table data can also be copied directly: selecting a complete column or dragging a multi-cell selection and pressing `Ctrl+C` copies the full selected contents using tab/newline delimiters suitable for text editors and spreadsheets.
+Through-table badge typography is slightly reduced where necessary so dense values remain inside the badge contour.
+
+### Empty values
+
+Applicable empty monitor/policy cells use a smooth diagonal marker.
+
+The ID Filter field is intentionally excluded: an empty ID Filter remains visually blank.
+
+### Tooltips
+
+Long Blacklist/Whitelist address values expose their complete text when the displayed range is elided.
+
+Composite policy IDs can expose the complete rule as badges on hover.
+
+---
+
+## Complete-row rendering and scrolling
+
+Traffic and policy tables render only rows that fit completely inside the viewport.
+
+- A partial bottom row remains hidden until its full height fits.
+- A partial top row is not left painted during row-based scrolling.
+- Mouse interaction follows complete visible rows.
+- Vertical scrolling stays aligned to item/row increments.
+- Country tiles follow the same complete-row principle.
+
+This prevents clipped rows and half-visible flag tiles while resizing or scrolling.
 
 ---
 
 ## IPv4 and IPv6
 
-Semaphore supports both IPv4 and IPv6 throughout its primary monitoring and policy workflows.
+Semaphore supports both IPv4 and IPv6 throughout its monitoring and policy workflows.
 
 Supported input formats include:
 
@@ -331,92 +463,56 @@ Full and abbreviated IPv6 notation are supported where applicable.
 
 ---
 
-# Screenshots
-
-The screenshots below highlight the main Semaphore v1.1 workflows.
-
-## Live Traffic
-
-<!--
-Upload the final Outbound / Inbound / Through screenshot to GitHub,
-then replace this comment with:
-
-<p align="center">
-  <img width="1200" alt="Semaphore live traffic monitoring" src="YOUR-GITHUB-ASSET-URL" />
-</p>
--->
-
-Live Outbound, Inbound and Through traffic with ports, protocol, GeoIP information, flags, saved names and firewall state.
-
----
-
-## Blacklist and Whitelist
-
-<!--
-<p align="center">
-  <img width="1200" alt="Semaphore blacklist and whitelist management" src="YOUR-GITHUB-ASSET-URL" />
-</p>
--->
-
-Persistent address and range policies with direct Add, Delete, Delete Range and Purge controls.
-
----
-
-## Country Blocking
-
-<!--
-<p align="center">
-  <img width="1200" alt="Semaphore country blocking" src="YOUR-GITHUB-ASSET-URL" />
-</p>
--->
-
-Visual country-level policy management with separate Allowed and Blocked areas.
-
----
-
-## Traffic Iteration History
-
-<!--
-<p align="center">
-  <img width="900" alt="Semaphore traffic iteration history" src="YOUR-GITHUB-ASSET-URL" />
-</p>
--->
-
-Compact history views reveal the individual events represented by repeated-address counters.
-
----
-
 # User interface
 
-Semaphore v1.1 uses a dense, traffic-focused interface designed to remain responsive during high-rate capture and large-policy operations while retaining normal Windows behavior.
+Semaphore v1.1.1 uses a compact custom-framed interface while retaining native Windows movement and resizing behavior.
 
 Highlights include:
 
-- custom Semaphore title bar;
-- native Windows resize behavior;
-- native maximize and restore;
+- custom centered Semaphore title bar;
+- native title-bar drag/move behavior;
+- resize handling from all four edges and corners;
 - Windows Snap compatibility;
+- maximize/restore behavior;
 - persistent window placement;
+- top-level settings cog;
 - tab-based traffic navigation;
-- color-coded traffic states;
-- compact table controls;
-- native table scroll behavior;
+- color-coded policy state;
+- content-sized badges;
+- complete-row table rendering;
+- native-style scrollbars;
 - country flag layouts;
-- frameless traffic-history popups;
+- compact traffic-history popups;
 - system-tray integration.
+
+The normal startup size remains larger than the minimum usable size, allowing the window to be resized down without disabling edge/corner resizing.
 
 ---
 
 ## Traffic state colors
 
-Traffic tables use immediate visual status indicators.
+Traffic and policy views distinguish current state visually.
 
 Typical address states include:
 
 - **Green** — allowed;
 - **Red** — blocked.
 
-Visual state is tied to the relevant policy status rather than retroactively changing previous observations unnecessarily.
+Where partial/mixed policy state is shown, its calculation follows the same normalized policy precedence used by enforcement rather than treating every intersecting Allow rule as an override.
+
+Historical traffic retains the state recorded for that event instead of being retroactively repainted solely because current policy changed later.
+
+---
+
+## Settings and release checking
+
+The top-level settings cog provides compact application settings.
+
+Semaphore can check the GitHub Releases feed for a newer stable version.
+
+- Only a genuinely newer public release is presented as an update.
+- Older public releases are not shown as updates to a newer running build.
+- Temporary v1.1.1 development/test release-check modes are not part of the production behavior.
 
 ---
 
@@ -430,15 +526,13 @@ The tray menu provides quick access to:
 - **Atop**
 - **Exit**
 
-Window size and position are remembered and restored between sessions.
-
-Semaphore also uses Windows composition handling to reduce visible flashing during tray restore.
+Window position, size and state are restored between sessions where applicable.
 
 ---
 
 # Download
 
-## Latest stable release: Semaphore v1.1
+## Latest stable release: Semaphore v1.1.1
 
 Download the latest binary from the:
 
@@ -447,7 +541,7 @@ Download the latest binary from the:
 Current Windows binary:
 
 ```text
-Semaphore-v1.1-win-x64.exe
+Semaphore-v1.1.1-win-x64.exe
 ```
 
 A SHA-256 checksum is provided alongside the release:
@@ -460,11 +554,11 @@ SHA256SUMS.txt
 
 # Installation
 
-Semaphore v1.1 is distributed as a **portable Windows application**.
+Semaphore v1.1.1 is distributed as a **portable Windows application**.
 
 No traditional installer is required.
 
-1. Download `Semaphore-v1.1-win-x64.exe` from the Releases page.
+1. Download `Semaphore-v1.1.1-win-x64.exe` from the Releases page.
 2. Place the executable in a directory of your choice.
 3. Run Semaphore.
 4. Approve Windows elevation when privileged capture or firewall operations require it.
@@ -486,20 +580,22 @@ No traditional installer is required.
 | WinPcap | Not required |
 | WinDivert | Not required |
 | External Qt installation | Not required for the portable release |
-| Administrator access | Required only for privileged operations |
+| Administrator access | Required for privileged capture/firewall operations |
 
 ---
 
 # Quick start
 
 1. Launch Semaphore.
-2. Allow the required Windows privilege elevation when requested.
+2. Approve the required Windows privilege elevation when requested.
 3. Observe live traffic in **Outbound**, **Inbound** and **Through**.
-4. Use the traffic address controls to block or allow an endpoint.
-5. Use **Lists → Blacklist** to manage persistent blocked addresses and ranges.
-6. Use **Lists → Whitelist** to manage explicit exceptions.
-7. Use **Lists → Country** to allow or block traffic by country.
-8. Minimize or close Semaphore to the system tray when appropriate.
+4. Inspect Flag, ID and Protocol information for remote endpoints.
+5. Use traffic actions or **Lists → Blacklist** to create deny policy.
+6. Use **Lists → Whitelist** for explicit exceptions.
+7. Use Protocol, Port, Lane and ID Filter fields when a rule needs narrower scope.
+8. Use **Country** for country-derived policy.
+9. Double-click an eligible repeated-address counter to inspect its individual events.
+10. Use the settings cog for application settings and release checking.
 
 ---
 
@@ -539,7 +635,7 @@ Equivalent IPv6 address, range and CIDR formats are supported.
 
 # Architecture
 
-Semaphore v1.1 separates its major responsibilities into distinct layers.
+Semaphore separates the ordinary GUI from privileged Windows networking operations.
 
 ```text
 ┌─────────────────────────────┐
@@ -547,37 +643,37 @@ Semaphore v1.1 separates its major responsibilities into distinct layers.
 │     Qt / non-elevated       │
 └──────────────┬──────────────┘
                │
-               │ privileged operations
+               │ private IPC / privileged operations
                ▼
 ┌─────────────────────────────┐
 │ Capture / Policy Component  │
 └──────────────┬──────────────┘
                │
-        ┌──────┴───────┐
-        ▼              ▼
+        ┌──────┴────────┐
+        ▼               ▼
 ┌──────────────┐  ┌──────────────┐
-│ Packet       │  │ Windows      │
-│ Monitor      │  │ Filtering    │
-│              │  │ Platform     │
+│ Windows      │  │ Windows      │
+│ Packet       │  │ Filtering    │
+│ Monitor      │  │ Platform     │
 └──────────────┘  └──────────────┘
 ```
 
-This architecture keeps the primary interface non-elevated while isolating operations that require administrator privileges.
+The elevated component also reports relevant Semaphore-owned WFP drop telemetry back to the GUI so blocked events can remain observable.
 
 ---
 
 # Privacy
 
-Semaphore performs its monitoring and firewall-management work locally.
+Semaphore's monitoring, policy evaluation, GeoIP lookup, ASN organization lookup and special-purpose address identification are performed using local Windows/application resources.
 
-The application is not built around:
+Semaphore is not built around:
 
 - a cloud account;
 - remote network-management infrastructure;
 - an online analytics dashboard;
-- an external GeoIP lookup API.
+- an external per-address GeoIP/ASN lookup API.
 
-GeoIP information used by Semaphore is resolved from local application resources.
+When release checking is enabled, Semaphore contacts the public GitHub Releases endpoint to determine whether a newer version is available. This is separate from traffic monitoring and endpoint identification.
 
 ---
 
@@ -587,18 +683,19 @@ Semaphore is intended for:
 
 - real-time endpoint traffic visibility;
 - local connection monitoring;
-- firewall policy management;
+- Windows firewall policy management;
 - identifying unexpected network endpoints;
-- IP and range blocking;
-- blacklist management;
-- whitelist management;
+- address/range blocking;
+- protocol/port-scoped policy;
+- Blacklist management;
+- Whitelist exceptions;
 - country-level filtering;
-- GeoIP-assisted traffic inspection;
+- GeoIP/ASN-assisted traffic inspection;
 - network troubleshooting.
 
 Semaphore is **not** intended to replace a full:
 
-- intrusion detection or prevention system;
+- intrusion detection/prevention system;
 - packet-analysis suite;
 - VPN;
 - router/firewall appliance;
@@ -610,11 +707,11 @@ It is an endpoint-oriented monitoring and policy-control tool.
 
 # Distribution and source availability
 
-Semaphore v1.1 is currently distributed as a **compiled Windows binary**.
+Semaphore v1.1.1 is currently distributed as a **compiled Windows binary**.
 
 The source code is **not included with this release**. Source availability may change in the future.
 
-Semaphore v1.1 is distributed under the terms of the MIT License. See [LICENSE](LICENSE) for details.
+Semaphore v1.1.1 is distributed under the terms of the MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
@@ -623,21 +720,36 @@ Semaphore v1.1 is distributed under the terms of the MIT License. See [LICENSE](
 To update a portable Semaphore installation:
 
 1. Exit the currently running Semaphore instance.
-2. Download the newer release.
+2. Download the newer stable release.
 3. Replace the previous executable.
 4. Start Semaphore normally.
 
 Persistent application data is maintained separately from the portable executable where applicable.
 
-Semaphore uses compact version numbering:
+Semaphore uses compact hierarchical version numbering and omits zero-valued components.
+
+Successive maintenance releases can extend the current version with an additional component before the preceding component advances:
 
 ```text
 v1
 v1.1
 v1.1.1
+v1.1.1.1
+v1.1.1.2
+v1.1.1.3
+v1.1.1.4
+v1.1.1.5
+v1.1.1.6
+v1.1.1.7
+v1.1.1.8
+v1.1.1.9
 v1.1.2
+v1.1.2.1
+v1.1.2.2
 ...
 ```
+
+Zero components are not written; for example, Semaphore uses `v1.1.1` rather than `v1.1.1.0`.
 
 ---
 
@@ -651,12 +763,14 @@ Blocking an incorrect:
 - range;
 - subnet;
 - country;
+- protocol;
+- port;
 
 can interrupt required network connectivity.
 
-When applying large policies, confirm that important infrastructure and management endpoints remain reachable.
+When applying broad policies, confirm that important infrastructure and management endpoints remain reachable.
 
-Use whitelist entries when explicit exceptions are required.
+Use Whitelist entries when explicit exceptions are required.
 
 ---
 
@@ -673,7 +787,7 @@ If you find Semaphore useful, you can support continued development:
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
-The current public release is distributed in binary form; source code is not included with Semaphore v1.1.
+The current public release is distributed in binary form; source code is not included with Semaphore v1.1.1.
 
 ---
 
@@ -684,13 +798,14 @@ Semaphore is built using:
 - **Qt**
 - **Windows Packet Monitor**
 - **Windows Filtering Platform**
-- **MaxMind GeoIP data**
+- **MaxMind GeoLite2 City data**
+- **MaxMind GeoLite2 ASN data**
 
 Country flag artwork and other third-party resources are distributed according to their respective licenses and attribution requirements.
 
 ---
 
 <p align="center">
-  <strong>Semaphore v1.1</strong><br>
+  <strong>Semaphore v1.1.1</strong><br>
   Current stable release
 </p>
