@@ -1,7 +1,7 @@
 # Semaphore
 
 <p align="center">
-  <img width="1734" height="782" alt="Screenshot_894" src="https://github.com/user-attachments/assets/deb3721c-0c18-40d3-a108-15ba90c0397a" />
+  <img width="1786" height="860" alt="Screenshot_1026" src="https://github.com/user-attachments/assets/f5a4b311-45a3-46fd-8761-e98779401cd5" />
 </p>
 
 <p align="center">
@@ -14,8 +14,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/MarceloAlejandroJorquera/Semaphore/releases/latest"><img src="https://img.shields.io/badge/Release-v1.1.1-blue" alt="Release v1.1.1"></a>
-  <a href="#whats-new-in-semaphore-v111"><img src="https://img.shields.io/badge/Status-Stable-brightgreen" alt="Stable"></a>
+  <a href="https://github.com/MarceloAlejandroJorquera/Semaphore/releases/latest"><img src="https://img.shields.io/badge/Release-v1.1.1.1-blue" alt="Release v1.1.1.1"></a>
+  <a href="#whats-new-in-semaphore-v1111"><img src="https://img.shields.io/badge/Status-Stable-brightgreen" alt="Stable"></a>
   <a href="#system-requirements"><img src="https://img.shields.io/badge/Platform-Windows%20x64-blue" alt="Windows x64"></a>
   <a href="#system-requirements"><img src="https://img.shields.io/badge/Qt-6.11.1-green" alt="Qt 6.11.1"></a>
   <a href="#native-windows-packet-capture"><img src="https://img.shields.io/badge/Capture-Windows%20Packet%20Monitor-blueviolet" alt="Windows Packet Monitor"></a>
@@ -49,38 +49,33 @@ Semaphore is intended for users who want to see **where their system is communic
 
 ---
 
-## What's new in Semaphore v1.1.1
+## What's new in Semaphore v1.1.1.1
 
-**Semaphore v1.1.1 is the current stable release.**
+**Semaphore v1.1.1.1 is the current stable release.**
 
-v1.1.1 builds on the performance and large-list work delivered in v1.1 and substantially expands Semaphore's endpoint identification, policy model, WFP enforcement, blocked-traffic visibility and user interface.
+v1.1.1.1 is a maintenance and interface-hardening release built on the v1.1.1 policy/WFP architecture. It focuses on policy editing, protocol selection, traffic-history fidelity, input rendering, font consistency, tooling and release reliability.
 
-### Major changes since v1.1
+### Major changes since v1.1.1
 
-- Added **local ASN organization identification** for public IP addresses using packaged MaxMind ASN data.
-- Added built-in identification for **well-known and special-purpose IPv4/IPv6 ranges**, including applicable multicast and local-scope traffic.
-- Added deterministic endpoint-ID precedence: **manual ID/name → special-purpose identity → ASN organization → Unnamed**.
-- Expanded Blacklist and Whitelist into a **unified policy model** capable of combining address/range, Lane/direction, Protocol, Port, Country and ID Filter constraints.
-- Added individual protocol selection with separate IPv4/IPv6 protocol identities where applicable.
-- Added explicit `Any` and `None` policy states; `None` is a disabled/non-matching condition rather than a wildcard.
-- Added **multi-value ID Filters** with `*` and `?` wildcard support and OR semantics.
-- Added policy normalization, duplicate collapse, compatible range merging and compatible Port-range coalescing.
-- Added a complete **policy-summary hover** so composite rules can be inspected as badges without relying on a shortened generated ID.
-- Improved Whitelist exception behavior and first-action unblock handling for historical blocked cells.
-- Added **WFP classify-drop telemetry** so traffic successfully blocked before the normal capture path can still appear as a blocked event.
-- Corrected blocked-event Outbound/Inbound direction classification.
-- Hardened WFP reconciliation and removed stale effective-block state after successfully retired rules.
-- Expanded traffic-history snapshots so historical rows preserve the policy state that existed when each event arrived.
-- Expanded traffic iteration popups with the endpoint, port, flag, ID/name and protocol information relevant to each recorded event.
-- Added compact badge rendering for policy values and monitor-table D&T / ID / Protocol values.
-- Added complete-row viewport rendering so partially visible rows and country tiles are not painted.
-- Added native Windows title-bar dragging, edge/corner resizing and improved Snap/maximize/restore behavior for the custom-framed window.
-- Added a compact **settings cog** and production release checking.
-- Improved startup restoration, generated-ID refresh, window placement, counter rendering, tooltips and numerous Qt 6.11.1 edge cases.
+- Added live **Protocol search** directly in the Protocol/Proto selector, including plain-text, wildcard and `/regular-expression/` matching.
+- Added a three-state Protocol filter control for **all / checked / unchecked** protocols while preserving current selections.
+- Reworked the manual `+` policy editor: compact popup behavior, badge-based ID Filter editing, improved Protocol/Port selectors and automatic commit on normal editor changes.
+- Added canonical merge/deduplication after manual rule edits so compatible rules can merge again and scoped edits can separate rules when their effective policy differs.
+- Split traffic **D&T** into separate date/time badges and expanded folded traffic-history persistence so individual iterations retain their own allowed/blocked result.
+- Advanced traffic-history persistence to **format v13**, while retaining backward-compatible restoration of earlier supported formats.
+- Added ID and Protocol badges to traffic-history detail views and corrected the Through detail schema/order.
+- Added a blocked-country count to the Country policy tab.
+- Reworked long editable fields with character-aware edge fading and caret-safe navigation, including manual rule fields and policy ID editing.
+- Standardized Semaphore UI typography on **Anonymous Pro** and removed native/default-font fallbacks from affected policy dialogs, menus and editors.
+- Refined checkbox, Protocol-filter and reload glyph rendering for consistent high-definition 1 px geometry.
+- Improved inline ID editing/selection presentation in live traffic and Rules tables while keeping the cell/badge visual state stable.
+- Removed temporary gray/pending presentation from newly arriving applicable selector cells by resolving current logical policy before first paint.
+- Added `Update-Dependencies.bat` / `tools/update-dependencies.ps1` for stable development-dependency auditing and update assistance.
+- Improved `Customize-GeoIP.bat` failure visibility and refreshed source validation for the current v1.1.1.1 source layout.
+- Cleaned portable-build warnings without hiding unrelated CMake/build failures.
+- Updated the release checker and application identity to **v1.1.1.1** while preserving variable-depth numeric comparison, so production v1.1.1 correctly detects this release as newer.
 
-For the complete v1.1 → v1.1.1 development record, see **[CHANGELOG.md](CHANGELOG.md)**.
-
-For security reporting and support policy, see **[SECURITY.md](SECURITY.md)**.
+For the complete v1.1.1 → v1.1.1.1 development record, see **[CHANGELOG.md](CHANGELOG.md)**.
 
 ---
 
@@ -124,7 +119,7 @@ Semaphore uses the packet-monitoring facilities provided by Windows.
 
 ### No third-party capture driver required
 
-Semaphore v1.1.1 does **not** require:
+Semaphore v1.1.1.1 does **not** require:
 
 - Npcap;
 - WinPcap;
@@ -175,8 +170,8 @@ A rule can combine applicable values from:
 - **ID**
 - **ID Filter**
 - **Lane**
-- **First IP Range**
-- **Last IP Range**
+- **First IP**
+- **Last IP**
 - **Flag / Country**
 - **Proto**
 - **Port**
@@ -185,7 +180,7 @@ Simple address/range rules therefore remain simple, while more specific policy c
 
 ### Rule normalization
 
-Semaphore normalizes policy created from the **Lists / policy** area, live traffic tables, history popups, startup restoration and rule editing.
+Semaphore normalizes policy created from the Lists pages, live traffic tables, history popups, startup restoration and rule editing.
 
 Where policy scope is genuinely equivalent, Semaphore can:
 
@@ -287,7 +282,7 @@ Generated identities can be refreshed across tables when the canonical identity 
 
 Blockable traffic cells can be acted upon directly.
 
-Policy actions use the same normalized policy path as the **Lists / policy** area, so a block/unblock made from a traffic row or history popup does not create a separate incompatible rule format.
+Policy actions use the same normalized policy path as the Lists pages, so a block/unblock made from a traffic row or history popup does not create a separate incompatible rule format.
 
 Whitelist exceptions are used when an endpoint must remain allowed while a broader deny policy still exists.
 
@@ -401,7 +396,7 @@ GeoIP/ASN identification does not require a per-address remote lookup API.
 
 ## Traffic and policy table presentation
 
-v1.1.1 adds a more compact visual language for structured values.
+Semaphore uses a compact visual language for structured values.
 
 ### Badges
 
@@ -467,7 +462,7 @@ Full and abbreviated IPv6 notation are supported where applicable.
 
 # User interface
 
-Semaphore v1.1.1 uses a compact custom-framed interface while retaining native Windows movement and resizing behavior.
+Semaphore v1.1.1.1 uses a compact custom-framed interface while retaining native Windows movement and resizing behavior.
 
 Highlights include:
 
@@ -514,7 +509,7 @@ Semaphore can check the GitHub Releases feed for a newer stable version.
 
 - Only a genuinely newer public release is presented as an update.
 - Older public releases are not shown as updates to a newer running build.
-- Version comparison supports Semaphore's variable-depth, zero-free release numbering.
+- Temporary development/test release-check modes are not part of the production behavior.
 
 ---
 
@@ -534,16 +529,17 @@ Window position, size and state are restored between sessions where applicable.
 
 # Download
 
-## Latest stable release: Semaphore v1.1.1
+## Latest stable release: Semaphore v1.1.1.1
 
 Download the latest binary from the:
 
 **[Semaphore Releases page](https://github.com/MarceloAlejandroJorquera/Semaphore/releases/latest)**
 
-Current Windows binary:
+Current Windows release assets:
 
 ```text
-Semaphore-v1.1.1-win-x64.exe
+Semaphore-v1.1.1.1-win-x64.exe
+Semaphore-v1.1.1.1-win-x64.zip
 ```
 
 A SHA-256 checksum is provided alongside the release:
@@ -556,11 +552,11 @@ SHA256SUMS.txt
 
 # Installation
 
-Semaphore v1.1.1 is distributed as a **portable Windows application**.
+Semaphore v1.1.1.1 is distributed as a **portable Windows application**.
 
 No traditional installer is required.
 
-1. Download `Semaphore-v1.1.1-win-x64.exe` from the Releases page.
+1. Download `Semaphore-v1.1.1.1-win-x64.exe` from the Releases page.
 2. Place the executable in a directory of your choice.
 3. Run Semaphore.
 4. Approve Windows elevation when privileged capture or firewall operations require it.
@@ -592,10 +588,10 @@ No traditional installer is required.
 2. Approve the required Windows privilege elevation when requested.
 3. Observe live traffic in **Outbound**, **Inbound** and **Through**.
 4. Inspect Flag, ID and Protocol information for remote endpoints.
-5. Open the **Lists / policy** tab (three-line glyph), then use **Blacklist** to create deny policy.
-6. Use **Whitelist** in the same policy area for explicit exceptions.
+5. Use traffic actions or **Rules → Blacklist** to create deny policy.
+6. Use **Rules → Whitelist** for explicit exceptions.
 7. Use Protocol, Port, Lane and ID Filter fields when a rule needs narrower scope.
-8. Use **Country** in the policy area for country-derived policy.
+8. Use **Country** for country-derived policy.
 9. Double-click an eligible repeated-address counter to inspect its individual events.
 10. Use the settings cog for application settings and release checking.
 
@@ -709,11 +705,11 @@ It is an endpoint-oriented monitoring and policy-control tool.
 
 # Distribution and source availability
 
-Semaphore v1.1.1 is currently distributed as a **compiled Windows binary**.
+Semaphore v1.1.1.1 is currently distributed as a **compiled Windows binary**.
 
 The source code is **not included with this release**. Source availability may change in the future.
 
-Semaphore v1.1.1 is distributed under the terms of the MIT License. See [LICENSE](LICENSE) for details.
+Semaphore v1.1.1.1 is distributed under the terms of the MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
@@ -728,9 +724,9 @@ To update a portable Semaphore installation:
 
 Persistent application data is maintained separately from the portable executable where applicable.
 
-Semaphore uses **zero-free hierarchical version numbering**.
+Semaphore uses compact hierarchical version numbering and omits zero-valued components.
 
-A component is written only when it is non-zero. Maintenance revisions extend the current version from `.1` through `.9`; after `.9`, the preceding component advances rather than introducing `.0`.
+Successive maintenance releases can extend the current version with an additional component before the preceding component advances:
 
 ```text
 v1
@@ -751,7 +747,7 @@ v1.1.2.2
 ...
 ```
 
-Zero components are omitted: for example, `v1.1.1` is used instead of `v1.1.1.0`.
+Zero components are not written; for example, Semaphore uses `v1.1.1` rather than `v1.1.1.0`.
 
 ---
 
@@ -774,8 +770,6 @@ When applying broad policies, confirm that important infrastructure and manageme
 
 Use Whitelist entries when explicit exceptions are required.
 
-For vulnerability reporting, supported-version policy and disclosure guidance, see **[SECURITY.md](SECURITY.md)**.
-
 ---
 
 # Support development
@@ -791,7 +785,7 @@ If you find Semaphore useful, you can support continued development:
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
-The current public release is distributed in binary form; source code is not included with Semaphore v1.1.1.
+The current public release is distributed in binary form; source code is not included with Semaphore v1.1.1.1.
 
 ---
 
@@ -810,6 +804,6 @@ Country flag artwork and other third-party resources are distributed according t
 ---
 
 <p align="center">
-  <strong>Semaphore v1.1.1</strong><br>
+  <strong>Semaphore v1.1.1.1</strong><br>
   Current stable release
 </p>
