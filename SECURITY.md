@@ -1,64 +1,80 @@
 # Security Policy
 
-## Supported versions
+## Supported Versions
 
-Semaphore security fixes are provided for the **current latest stable release**.
+Security fixes are provided for the current stable Semaphore release.
 
-At the time of this policy update, the supported release is:
-
-| Version | Security support |
+| Version | Supported |
 |---|---|
-| v1.1.1 | Supported |
-| v1.1 and older | Not actively supported |
+| `v1.1.1.1` | Yes |
+| `v1.1.1` | No |
+| `v1.1` | No |
+| `v1` | No |
+| Pre-release / development builds | No |
 
-Users should move to the latest stable release before reporting an issue that may already have been corrected.
+Older releases may remain available for archival purposes, but users should move to the current stable release when practical.
 
-## Reporting a vulnerability
+## Reporting a Vulnerability
 
-Please **do not publish vulnerability details, exploit steps, credentials, private network information, or proof-of-concept code in a public GitHub issue**.
+Please **do not open a public GitHub Issue** for a vulnerability that could put users or networks at risk.
 
-Preferred reporting path:
+If private vulnerability reporting is enabled for the repository, use GitHub's private security reporting feature from the repository's **Security** area. Include enough information to reproduce and assess the issue safely.
 
-1. Use GitHub's **Report a vulnerability** / private vulnerability reporting feature for this repository if it is available.
-2. Include the affected Semaphore version, Windows version, reproduction conditions, security impact, and the minimum technical detail required to reproduce the problem.
-3. Include logs or screenshots only after removing credentials, tokens, private addresses, personal information, and unrelated system data.
+Useful report details include:
 
-If private vulnerability reporting is not available, open a public issue containing **only a request to establish private security contact**. Do not include the vulnerability details in that issue.
+- affected Semaphore version;
+- Windows version and architecture;
+- clear reproduction steps;
+- whether administrator elevation is required;
+- whether the issue can be triggered by local or remote network traffic;
+- the relevant address/range, Lane, Protocol, Port, Country or ID Filter policy scope when applicable;
+- whether Windows Packet Monitor capture, WFP enforcement, the elevated broker, persistence, GeoIP/ASN processing or release checking is involved;
+- sanitized logs, screenshots or crash information;
+- the security impact you believe is possible.
 
-## What to report
+Do not include credentials, private keys, unrelated personal information, or sensitive network data that is not needed to reproduce the issue.
 
-Security reports are especially relevant when they involve:
+## Security-Relevant Areas
 
-- unintended Windows Filtering Platform policy behavior;
-- privilege-boundary or elevated-broker issues;
-- unsafe loading or execution of privileged components;
-- IPC authorization or trust-boundary problems;
-- release/update integrity problems;
-- parsing of untrusted blocklist/policy input that could cause code execution, privilege escalation, or persistent policy corruption;
-- exposure of sensitive local information beyond Semaphore's intended functionality.
+Examples of issues that should be reported privately include:
 
-Ordinary bugs, UI defects, incorrect classifications, feature requests, and non-security crashes should use the normal issue tracker.
+- local privilege escalation or an unintended elevation boundary bypass;
+- unsafe broker/GUI IPC handling;
+- WFP policy that can be bypassed when Semaphore reports it as enforced;
+- unintended traffic blocking/allowing caused by malformed or corrupted persistent policy state;
+- memory-safety or denial-of-service conditions caused by untrusted network/capture data;
+- unsafe parsing of imported blocklists, ranges, CIDR data or generated GeoIP/ASN resources;
+- arbitrary file creation, overwrite or path traversal in persistence/import/update tooling;
+- integrity failures in generated portable payloads or release assets;
+- sensitive-data disclosure beyond normal network-monitoring visibility;
+- vulnerabilities in bundled dependencies that materially affect Semaphore.
 
-## Disclosure
+Ordinary UI defects, performance problems, incorrect non-security presentation and feature requests should normally use regular GitHub Issues unless they also create a security impact.
 
-Please allow reasonable time for investigation and a corrected stable release before public disclosure.
+## Coordinated Disclosure
 
-When a report is confirmed, the project will aim to:
+Please allow reasonable time for investigation and remediation before public disclosure. Additional information or a reproducible test case may be requested before an issue can be confirmed.
 
-- reproduce and assess the issue;
-- determine affected versions;
-- prepare and validate a fix;
-- publish a corrected stable release when necessary;
-- document security-relevant upgrade guidance.
+Security fixes may be released using Semaphore's compact zero-free hierarchy, for example:
 
-## Release verification
-
-Stable Semaphore releases publish the Windows executable together with `SHA256SUMS.txt`.
-
-After downloading a release, the executable can be verified with PowerShell:
-
-```powershell
-Get-FileHash ".\Semaphore-v1.1.1-win-x64.exe" -Algorithm SHA256
+```text
+v1.1.1
+v1.1.1.1
+v1.1.1.2
+...
+v1.1.2
 ```
 
-Compare the resulting SHA-256 value with the checksum published in the same GitHub Release.
+Published binaries should be accompanied by SHA-256 checksums so users can verify the exact downloaded assets.
+
+## Binary Distribution
+
+Semaphore stable releases are distributed as portable Windows x64 assets. The public release may be binary-only. Security reports remain in scope for the released binary, privileged broker behavior, policy/persistence formats, generated resources and network behavior regardless of source availability.
+
+## Network and Privacy Notes
+
+Semaphore monitors local network activity and can actively modify Windows Filtering Platform policy. GeoIP, ASN organization and special-purpose address identification are performed from local application resources. When release checking is enabled, Semaphore contacts the public GitHub Releases API to determine whether a newer stable release exists.
+
+## Responsible Testing
+
+Only test systems, networks and policy environments that you own or are authorized to test. Avoid experiments that could disrupt third-party systems or unrelated network users.
