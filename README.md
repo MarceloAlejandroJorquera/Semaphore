@@ -1,7 +1,7 @@
 # Semaphore
 
 <p align="center">
-  <img width="1786" height="860" alt="Screenshot_1026" src="https://github.com/user-attachments/assets/f5a4b311-45a3-46fd-8761-e98779401cd5" />
+  <img width="1672" height="968" alt="Screenshot_1052" src="https://github.com/user-attachments/assets/edf9894d-ba38-40e8-976f-b65c25fb77e2" />
 </p>
 
 <p align="center">
@@ -14,8 +14,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/MarceloAlejandroJorquera/Semaphore/releases/latest"><img src="https://img.shields.io/badge/Release-v1.1.1.1-blue" alt="Release v1.1.1.1"></a>
-  <a href="#whats-new-in-semaphore-v1111"><img src="https://img.shields.io/badge/Status-Stable-brightgreen" alt="Stable"></a>
+  <a href="https://github.com/MarceloAlejandroJorquera/Semaphore/releases/latest"><img src="https://img.shields.io/badge/Release-v1.1.1.2-blue" alt="Release v1.1.1.2"></a>
+  <a href="#whats-new-in-semaphore-v1112"><img src="https://img.shields.io/badge/Status-Stable-brightgreen" alt="Stable"></a>
   <a href="#system-requirements"><img src="https://img.shields.io/badge/Platform-Windows%20x64-blue" alt="Windows x64"></a>
   <a href="#system-requirements"><img src="https://img.shields.io/badge/Qt-6.11.1-green" alt="Qt 6.11.1"></a>
   <a href="#native-windows-packet-capture"><img src="https://img.shields.io/badge/Capture-Windows%20Packet%20Monitor-blueviolet" alt="Windows Packet Monitor"></a>
@@ -49,36 +49,28 @@ Semaphore is intended for users who want to see **where their system is communic
 
 ---
 
-## What's new in Semaphore v1.1.1.1
+## What's new in Semaphore v1.1.1.2
 
-**Semaphore v1.1.1.1 is the current stable release.**
+**Semaphore v1.1.1.2 is the current stable release.**
 
-v1.1.1.1 is a maintenance and interface-hardening release built on the v1.1.1 policy/WFP architecture. It focuses on policy editing, protocol selection, traffic-history fidelity, input rendering, font consistency, tooling and release reliability.
+v1.1.1.2 is a maintenance, history, policy-precision and release-reliability update built on the v1.1.1.1 WFP architecture.
 
-### Major changes since v1.1.1
+### Major changes since v1.1.1.1
 
-- Added live **Protocol search** directly in the Protocol/Proto selector, including plain-text, wildcard and `/regular-expression/` matching.
-- Added a three-state Protocol filter control for **all / checked / unchecked** protocols while preserving current selections.
-- Reworked the manual `+` policy editor: compact popup behavior, badge-based ID Filter editing, improved Protocol/Port selectors and automatic commit on normal editor changes.
-- Added canonical merge/deduplication after manual rule edits so compatible rules can merge again and scoped edits can separate rules when their effective policy differs.
-- Split traffic **D&T** into separate date/time badges and expanded folded traffic-history persistence so individual iterations retain their own allowed/blocked result.
-- Advanced traffic-history persistence to **format v13**, while retaining backward-compatible restoration of earlier supported formats.
-- Added ID and Protocol badges to traffic-history detail views and corrected the Through detail schema/order.
-- Added a blocked-country count to the Country policy tab.
-- Reworked long editable fields with character-aware edge fading and caret-safe navigation, including manual rule fields and policy ID editing.
-- Standardized Semaphore UI typography on **Anonymous Pro** and removed native/default-font fallbacks from affected policy dialogs, menus and editors.
-- Refined checkbox, Protocol-filter and reload glyph rendering for consistent high-definition 1 px geometry.
-- Improved inline ID editing/selection presentation in live traffic and Rules tables while keeping the cell/badge visual state stable.
-- Removed temporary gray/pending presentation from newly arriving applicable selector cells by resolving current logical policy before first paint.
-- Added `Update-Dependencies.bat` / `tools/update-dependencies.ps1` for stable development-dependency auditing and update assistance.
-- Improved `Customize-GeoIP.bat` failure visibility and refreshed source validation for the current v1.1.1.1 source layout.
-- Cleaned portable-build warnings without hiding unrelated CMake/build failures.
-- Updated the release checker and application identity to **v1.1.1.1** while preserving variable-depth numeric comparison, so production v1.1.1 correctly detects this release as newer.
+- Rebuilt Outbound, Inbound and Through history around **populated wall-clock hours**, with indexed per-day binary persistence, hour/day navigation and a custom date/calendar interface.
+- Added **hourly in-session release polling** so a future stable release published after Semaphore starts can be discovered without restarting the application; transient failures use bounded retry backoff.
+- Added traffic-class-aware Protocol policy for meaningful Broadcast, Subnet-Broadcast, Multicast and IPv6 Link-Local selectors, carried through WFP enforcement and blocked-event telemetry.
+- Added the Rules **Cat** picker for searchable IPv4/IPv6 public, special-purpose, multicast, reserved and active-interface ranges.
+- Split Blacklist/Whitelist automatic **Merge** into independent page settings and added explicit checked-range merging with family-safe enclosing spans.
+- Made full **All / In / Out** policy family-complete across IPv4 and IPv6 and hardened interactive WFP add-before-delete reconciliation.
+- Preserved Rules flags as display-only geography and improved merged-range country classification without turning address rules into country policy.
+- Removed Country-page flag tile backgrounds/borders so native flag shapes render directly, including non-rectangular flags such as Nepal.
+- Reworked traffic-tab unread counters to count actual queries/iterations, scale compactly through `k`/`m`/`b`, survive coalescing/history rollover, and clear reliably on the first valid live-page selection.
+- Improved fresh-profile window placement, inline Rules editing, badge tooltips, clipboard alignment, capture publication latency and Qt 6.11.1/MinGW compatibility.
 
-For the complete v1.1.1 → v1.1.1.1 development record, see **[CHANGELOG.md](CHANGELOG.md)**.
+For the exhaustive v1.1.1.1 → v1.1.1.2 development record, see [CHANGELOG.md](CHANGELOG.md).
 
 ---
-
 # Features
 
 ## Real-time network monitoring
@@ -119,7 +111,7 @@ Semaphore uses the packet-monitoring facilities provided by Windows.
 
 ### No third-party capture driver required
 
-Semaphore v1.1.1.1 does **not** require:
+Semaphore v1.1.1.2 does **not** require:
 
 - Npcap;
 - WinPcap;
@@ -462,7 +454,7 @@ Full and abbreviated IPv6 notation are supported where applicable.
 
 # User interface
 
-Semaphore v1.1.1.1 uses a compact custom-framed interface while retaining native Windows movement and resizing behavior.
+Semaphore v1.1.1.2 uses a compact custom-framed interface while retaining native Windows movement and resizing behavior.
 
 Highlights include:
 
@@ -505,11 +497,16 @@ Historical traffic retains the state recorded for that event instead of being re
 
 The top-level settings cog provides compact application settings.
 
-Semaphore can check the GitHub Releases feed for a newer stable version.
+When **Check updates** is enabled, Semaphore checks the public GitHub Releases endpoint after startup and keeps a lightweight in-session release poll active while the visible application remains running.
 
-- Only a genuinely newer public release is presented as an update.
-- Older public releases are not shown as updates to a newer running build.
-- Temporary development/test release-check modes are not part of the production behavior.
+- The running build compares public release tags using Semaphore's zero-free, variable-depth numeric version scheme.
+- Only a genuinely newer **published full release** is presented as an update.
+- After the initial check, Semaphore rechecks approximately once per hour, allowing a new stable release posted during a long-running session to be discovered without restarting the application.
+- Temporary network/API failures use bounded retry backoff before returning to the normal hourly cadence.
+- **Don't show again** applies only to the exact displayed release tag; later releases remain discoverable.
+- Disabling update checks stops the periodic poll and pending retries; re-enabling performs a fresh check.
+
+This is **release polling, not application/network analytics telemetry**. Semaphore does not upload captured traffic, endpoint history, firewall Rules, GeoIP/ASN results or usage analytics as part of the update check.
 
 ---
 
@@ -529,7 +526,7 @@ Window position, size and state are restored between sessions where applicable.
 
 # Download
 
-## Latest stable release: Semaphore v1.1.1.1
+## Latest stable release: Semaphore v1.1.1.2
 
 Download the latest binary from the:
 
@@ -538,8 +535,8 @@ Download the latest binary from the:
 Current Windows release assets:
 
 ```text
-Semaphore-v1.1.1.1-win-x64.exe
-Semaphore-v1.1.1.1-win-x64.zip
+Semaphore-v1.1.1.2-win-x64.exe
+Semaphore-v1.1.1.2-win-x64.zip
 ```
 
 A SHA-256 checksum is provided alongside the release:
@@ -552,11 +549,11 @@ SHA256SUMS.txt
 
 # Installation
 
-Semaphore v1.1.1.1 is distributed as a **portable Windows application**.
+Semaphore v1.1.1.2 is distributed as a **portable Windows application**.
 
 No traditional installer is required.
 
-1. Download `Semaphore-v1.1.1.1-win-x64.exe` from the Releases page.
+1. Download `Semaphore-v1.1.1.2-win-x64.exe` from the Releases page.
 2. Place the executable in a directory of your choice.
 3. Run Semaphore.
 4. Approve Windows elevation when privileged capture or firewall operations require it.
@@ -705,11 +702,11 @@ It is an endpoint-oriented monitoring and policy-control tool.
 
 # Distribution and source availability
 
-Semaphore v1.1.1.1 is currently distributed as a **compiled Windows binary**.
+Semaphore v1.1.1.2 is currently distributed as a **compiled Windows binary**.
 
 The source code is **not included with this release**. Source availability may change in the future.
 
-Semaphore v1.1.1.1 is distributed under the terms of the MIT License. See [LICENSE](LICENSE) for details.
+Semaphore v1.1.1.2 is distributed under the terms of the MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
@@ -785,7 +782,7 @@ If you find Semaphore useful, you can support continued development:
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
-The current public release is distributed in binary form; source code is not included with Semaphore v1.1.1.1.
+The current public release is distributed in binary form; source code is not included with Semaphore v1.1.1.2.
 
 ---
 
@@ -804,6 +801,6 @@ Country flag artwork and other third-party resources are distributed according t
 ---
 
 <p align="center">
-  <strong>Semaphore v1.1.1.1</strong><br>
+  <strong>Semaphore v1.1.1.2</strong><br>
   Current stable release
 </p>
