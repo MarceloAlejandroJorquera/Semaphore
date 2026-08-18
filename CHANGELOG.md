@@ -1,8 +1,128 @@
-# Semaphore v1.1.1.1 — Exhaustive changes since v1.1.1
+# Semaphore Changelog
+
+## v1.1.1.2 — 2026-08-18
+
+Semaphore v1.1.1.2 is the stable maintenance release following v1.1.1.1. This section consolidates the final behavior shipped from the v1.1.1.2 development cycle; superseded intermediate experiments are intentionally omitted.
+
+### Highlights
+
+- Rebuilt traffic history around **wall-clock hourly pages** for Outbound, Inbound and Through, with indexed per-day binary persistence, populated-hour/day navigation, segmented date controls and a Semaphore-owned calendar.
+- Added long-running **release discovery**: an initial GitHub Releases check is followed by an approximately hourly in-session poll, with bounded 2/10/30-minute retry backoff after transient failures.
+- Added granular **traffic-class-aware Protocol policy** so Broadcast, Subnet-Broadcast, IPv4/IPv6 Multicast and IPv6 Link-Local variants can be represented and enforced independently where meaningful.
+- Added the Rules **Cat** category picker with searchable, concrete First IP/Last IP ranges covering public, special-purpose, multicast, reserved and active-interface categories for IPv4 and IPv6.
+- Added independent Blacklist/Whitelist **Merge** policies and an explicit checked-range merge action; Blacklist automatic Merge defaults on while Whitelist defaults off.
+- Hardened interactive WFP policy reconciliation, full IPv4/IPv6 All/In/Out coverage, Whitelist precedence and blocked-event state consistency.
+- Improved range/country flag presentation, including country-preserving merged-range classification and background-free Country-page flags.
+- Reworked traffic-tab unread counters to count actual queries/iterations rather than coalesced rows, with compact `k`/`m`/`b` scaling and reliable first-click acknowledgement.
+
+### Release checking and update discovery
+
+- Public application identity is `v1.1.1.2`; the production executable/archive names are `Semaphore-v1.1.1.2-win-x64.exe` and `Semaphore-v1.1.1.2-win-x64.zip`.
+- Release checking uses the public GitHub `releases/latest` endpoint and the existing zero-free, variable-depth numeric comparator, so tags such as `v1.1.1.3`, `v1.1.1.9`, `v1.1.2` and deeper future maintenance tags compare correctly against `v1.1.1.2`.
+- After the first visible-window check, a one-hour in-session timer keeps release discovery active while Semaphore remains running. A future stable release posted after startup can therefore be discovered on the next hourly check without restarting Semaphore.
+- Temporary request failures retry after approximately 2, 10 and 30 minutes. Once a valid response is received, the retry state is cleared and the normal hourly cadence resumes.
+- Request-in-flight state is released after every completed request and a separate in-flight guard prevents overlapping GitHub requests.
+- **Don't show again** suppresses only the exact displayed release tag. It does not disable update checking and cannot suppress later tags.
+- Disabling **Check updates** stops poll/retry timers. Re-enabling it clears exact-tag suppression and schedules a fresh check.
+- Tray hide/restore no longer causes redundant requests inside the normal hourly window.
+
+### Hourly traffic history, navigation and persistence
+
+- Replaced fixed-size traffic pages with complete **populated hourly pages**. Empty hours do not create pages; a logical repeat group cannot cross an hour boundary.
+- The first traffic event in a new hour closes the previous hour and begins the new live page. Outbound, Inbound and Through maintain independent hourly histories.
+- Added compact `.sthr` per-record hour indexes alongside the existing binary history data/offset indexes. Older history lazily reconstructs missing hour indexes after the initial visible frame.
+- Frozen rows are archived incrementally. When viewing history or scrolled away from the live top, completed pending rows are written promptly while only the newest mutable pending row remains in memory.
+- History storage remains append-only and indexed by day/direction. Index reconstruction remains available for missing/corrupt indexes without discarding the retained data stream.
+- Startup no longer synchronously materializes all history. Only the needed traffic view is hydrated, and history work remains deferred/lazy so the first visible window is not blocked by historical parsing.
+- Footer accounting uses indexed hour metadata rather than repeated full-history reconstruction; historical width initialization samples bounded recent rows rather than performing an O(all rows) pass.
+- The footer readout uses the actual **hour / 24** model. Direct hour entry accepts `0`–`23` but only populated hours can be selected.
+- Single chevrons navigate populated hours; double chevrons navigate populated days. Older history is to the left and newer history is to the right.
+- Segmented day/month/year fields expand to avoid digit clipping. Date segments dim when only one value exists in that scope, and hover help exposes weekday/month/Year context.
+- The custom calendar uses Anonymous Pro, English month names, Monday-first weekday initials, disabled unavailable dates, compact selected-day geometry and DPI-independent navigation/calendar glyphs.
+- Clicking/re-clicking a traffic tab while browsing an older date returns only to the newest populated hour **within that selected date**. It does not silently jump to the globally newest date.
+- Live traffic continues to be captured while older hours/days are displayed; historical navigation never retroactively mutates stored event policy snapshots.
+
+### Traffic counters and live presentation
+
+- Traffic `#` numbering is scoped to the current populated hour and persists enough date/hour metadata to continue correctly after a restart within that same hour.
+- The tab unread badge now counts underlying queries/iterations, not the number of coalesced pending rows. Repeats, batches and newly distinct pending rows all contribute to one cumulative unread total.
+- Pending-row archival, hour rollover and internal history persistence do not clear the unread badge.
+- Inactive traffic tabs always route arriving events through the unread/pending path even when a hidden scrollbar reports zero.
+- Badge formatting is compact and monotonic: `1`–`999`, then `1k`, `1.11k`, `2k`; thousands become integer-only from `10k`, and the same rule continues through millions and billions. Values truncate rather than round upward.
+- A selected traffic tab acknowledges the unread badge only when it has actually reached the live/newest page at the top. Post-selection reconciliation handles events arriving during the tab switch and the deferred initial-history-load race, so the counter clears on the **first** valid selection rather than requiring a second click.
+- Live capture publication batch slices were reduced substantially and the Packet Monitor reader runs at normal priority after startup, reducing first-visible-row latency while preserving bounded event-loop backpressure.
+
+### Rules, protocol classes and WFP enforcement
+
+- Protocol policy now carries an independent traffic-class dimension rather than encoding decorated traffic variants as synthetic protocol numbers.
+- The manual Protocol picker remains complete for base IP protocol numbers `0`–`255`, but class-qualified variants are offered only where the delivery mode is meaningful. Existing/observed exact class-qualified selectors remain editable even when they are not normally offered for manual discovery.
+- Canonical class-qualified tokens are persisted independently from base protocol tokens; base TCP/UDP family selection remains explicit for IPv4/IPv6.
+- Scoped-firewall IPC advanced to protocol v5 and carries traffic class independently to the elevated broker.
+- WFP filters combine protocol and address-type/range conditions so decorated Protocol values are enforced as compound selectors. Parent/base rules still cover their qualified child classes where intended.
+- Broker drop telemetry carries the matched traffic class from the broker-owned filter identity, preserving exact decorated state in the GUI; address-based classification remains a fallback for broader parent filters.
+- Directed IPv4 broadcast recognition now uses each active interface's actual broadcast address rather than a `/24` suffix assumption.
+- Protocol coverage, deduplication, whitelist precedence, selector coloring, port+protocol composition and reconciliation retain class qualifiers end-to-end; IPv4 base tokens no longer accidentally cover IPv6 equivalents.
+- Protocol number 58 is presented as **ICMPv6**, matching live-table terminology.
+- Protocol picker select-all moved into the header checkbox; a fully checked base picker persists canonically as `Any` rather than expanding hundreds of tokens.
+- Full-scope **All**, **In** and **Out** actions are dual-family: complete IPv4 and IPv6 coverage is required before the action is considered satisfied.
+- Opposite equal-scope full policies are retired before installing a new full Block/Allow action, while narrower explicit exceptions are preserved.
+- Legacy absolute standalone All policies migrate into canonical address-range stores so interactive exact blocking and range splitting see the same policy state that WFP enforces.
+- Broker-confirmed range indexes treat directly adjacent IPv4/IPv6 filters as continuous coverage, matching canonical Rules Merge behavior and avoiding transient false partial states during filter replacement.
+- Manual address-policy mutations advance policy revision and verify the new canonical WFP range before obsolete exact/smaller filters are retired, preserving add-before-delete enforcement.
+- New traffic rows can re-verify a canonical manual block while broker-confirmed coverage is transitioning, preventing false-green snapshots without repainting historical rows.
+- Through-table inbound-side policy matching uses **Origin Port**, consistent with its remote/origin endpoint semantics.
+
+### Rules tables, Merge and Category picker
+
+- Blacklist and Whitelist have independent automatic **Merge** toggles and persisted settings. Defaults are Blacklist enabled / Whitelist disabled; the former shared merge preference is obsolete.
+- The Rules selection column's solid-circle header action is **range-only** in the final release. It never consumes standalone/scoped Proto, Port, ID Filter, Lane or Country rules.
+- Every checked address range is collapsed into the smallest enclosing span per address family, intentionally including gaps between selected ranges. IPv4 and IPv6 remain separate results and unchecked neighbours are not pulled into the operation.
+- The Cat picker uses separate **First IP** and **Last IP** columns. Each row represents exactly one concrete range; multi-range semantic categories repeat as separate rows instead of comma-joining addresses.
+- Category search covers Category, First IP, Last IP and Meaning, with checked/unchecked filtering and header select-all behavior.
+- The catalog consolidates overlapping/static subsets into non-overlapping canonical coverage while retaining contextual active-interface subnet categories.
+- Public IPv4/IPv6 space, special-purpose ranges, multicast, reserved/deprecated space and active-interface subnet-network/subnet-broadcast ranges are represented with concrete endpoints.
+- IPv4 Reserved excludes `255.255.255.255`, leaving Limited Broadcast exclusive. IPv4/IPv6 multicast umbrellas replace redundant contained subcategories where appropriate.
+- `All` and `Any` category/policy materialization covers both IPv4 and IPv6 families.
+- Interactive Allow from Outbound/Inbound preserves the live ASN/organization as the Whitelist ID when available, falling back to the local organization lookup rather than generating the old `GUI Unblock` provenance.
+
+### GeoIP, flags and country-policy separation
+
+- Rules flags derived from an address/range are **display-only geography**. Direct GUI blocks, Protocol/Port/ID Filter rules and other address-scoped actions no longer infer `countries` enforcement metadata from the row's flag.
+- Country-wide enforcement remains owned by the Country page or an explicit country action, preserving one source of truth for country policy.
+- Range flags are recalculated over the complete merged span. Unclassified GeoIP holes do not erase a flag when all available classifications resolve to the same base country; mixed-country spans remain blank.
+- Blacklist/Whitelist rows therefore retain or regain a correct flag after automatic/explicit range merging whenever the resulting span is country-unambiguous.
+- Country-page flags render directly on the page with no per-tile fill, border, rounded frame, policy-state background or hover substrate. Non-rectangular flags such as Nepal no longer appear inside a square background.
+- Restored the current GeoIP/ASN/special-purpose implementation after the range-classification change, preserving `specialPurposeNameForIp()` and `organizationForIp()` and avoiding the linker regression from the superseded overlay.
+
+### UI, editing and tooling
+
+- Fresh-profile normal startup targets approximately `1666 × 999`, centered before the first native show while DWM remains cloaked. Valid saved geometry remains authoritative; undersized work areas still use the maximized fallback.
+- Editable Rules ID/First IP/Last IP cells preserve their policy-state background during editing, keep one stable text origin and apply edge fades to clipped text/selection without shifting on repeated clicks.
+- Empty internal `Unnamed` IDs remain visually/copy-wise blank while persistence semantics are preserved.
+- Truncated ID Filter/Proto/Port cells expose complete badge-rendered tooltips. Shared badge tooltips cap actual rendered values at 20 and append an ellipsis indicator beyond that.
+- Editable ID values are capped at 48 characters; ID Filter policy is capped at 20 wildcard filters with a 16-character limit per filter, including persisted/imported canonicalization.
+- Table clipboard export provides aligned monospaced fixed-width plain text plus a parallel TSV representation for spreadsheet-aware consumers.
+- Purge controls retain their compact Update Now interaction model but use Semaphore's canonical blocking red treatment.
+- The Protocol search editor stretches across its available header; Protocol and Category search fields retain full line-edit capacity and use scrolling/fades only when content exceeds the visible field.
+- The title group (`SEMAPHORE` plus version badge) is centered as a complete group rather than centering only the wordmark.
+- Current-hour/page input is numeric-only and constrained to valid populated values; the Qt 6.11.1 const-validator path is handled safely.
+- Repaired stale `GUI.h` declarations exposed by the Qt 6.11.1/MinGW build so current standalone-rule bounds, manual-rule controls, scoped helpers and native overlay/resize declarations match `GUI.cpp`.
+- Fixed Qt 6.11.1/MinGW compile issues involving non-`Q_OBJECT` custom widgets, GCC initializer-list deduction and the Windows `interface` macro.
+
+### Compatibility
+
+- Existing supported persistent Rules/history state continues to migrate through the established compatibility paths; older binary traffic history remains readable and missing hourly indexes are reconstructed lazily.
+- Existing saved window placement remains authoritative unless invalid for the current work area/minimum constraints.
+- The zero-free variable-depth release numbering remains unchanged (`v1.1.1.1` → `v1.1.1.2` → `v1.1.1.3` … → `v1.1.2`).
+- v1.1.1.2 retains Windows Packet Monitor capture, Windows Filtering Platform enforcement, local GeoIP/ASN/special-purpose identification, IPv4/IPv6 policy, system-tray operation and the existing Whitelist-over-Blacklist/Country precedence model.
+
+---
+
+## v1.1.1.1 — Exhaustive changes since v1.1.1
 
 This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 development cycle.
 
-## Added
+### Added
 
 - Protocol-selection modal live search embedded directly in the **Proto** header.
 - Protocol search supports case-insensitive plain-text matching, `*` / `?` wildcards, and `/regular-expression/` matching.
@@ -22,7 +142,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - Blocked-country count in the Country policy tab label, matching the Blacklist/Whitelist count presentation.
 - Alpha-fade edge treatment for long editable text fields, revealing hidden/truncated text boundaries without hard clipping.
 
-## Changed
+### Changed
 
 - Development/public version identity advanced from `v1.1.1` to `v1.1.1.1`.
 - Qt application version advanced from `1.1.1` to `1.1.1.1`.
@@ -55,7 +175,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - Informational/help tooltips now use one application-wide Semaphore `QToolTip` treatment matching the Protocol filter control: dark surface, rounded corners and red underline; the yellow custom tooltip remains reserved for genuinely truncated table-cell full-value previews.
 - Long QLineEdit values now fade at the actually hidden left/right edge(s), following the editor's horizontal scroll/caret position rather than ending in an abrupt hard clip.
 
-## Fixed
+### Fixed
 
 - Truncated/touching headers and clipped editor geometry in the `+` manual policy-rule popup.
 - ID Filter values in the manual-rule popup appearing as one plain comma-separated string rather than individual badges.
@@ -89,7 +209,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - Inconsistent informational tooltip appearances across buttons, tabs, policy cells and helper controls by applying the same rounded/red-underlined style globally to standard QToolTip windows.
 - Abrupt hard clipping of long text in Protocol search, Port, ID Filter, manual policy ID/range editors and inline policy ID editing by adding MJTC-style edge fading.
 
-## Preserved
+### Preserved
 
 - v1.1.1 stable WFP policy/enforcement behavior unless explicitly changed above.
 - Existing zero-free, variable-depth release-version comparison semantics.
@@ -98,14 +218,14 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - Existing maximum of seven visible rows in protocol-selection popups.
 - Existing historical traffic compatibility for earlier stored iterator formats.
 
-## Empty-cell presentation
+### Empty-cell presentation
 
 - Replaced the single diagonal empty-cell marker with a dense vertical parallel-line hatch.
 - The hatch uses crisp 1 px lines with 1 px spacing across the cell, matching the requested presentation.
 - Applied everywhere the previous diagonal marker was used, including empty traffic cells, missing flags, and disabled/empty Protocol/Port policy cells.
 - Empty ID Filter cells remain intentionally blank and are not hatched.
 
-### Header / tooltip typography regression
+#### Header / tooltip typography regression
 
 - Restored Semaphore's canonical **Anonymous Pro, bold, 17 pt** typography for table/header views after the application-wide informational-tooltip styling introduced an unintended native/default-font fallback.
 - Informational tooltips now explicitly use the same canonical Semaphore font family, weight and size while retaining the new dark rounded style and red underline.
@@ -113,7 +233,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - The custom yellow truncated-cell tooltip remains unchanged.
 
 
-### Input edge fade completion fix
+#### Input edge fade completion fix
 
 - Corrected the MJTC-style QLineEdit edge fade so clipped glyph fragments can no longer remain visible at the left or right boundary.
 - Added a fully opaque edge cap before the alpha falloff, rather than stopping at a high-but-translucent alpha value.
@@ -122,14 +242,14 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - The fade now samples the active style option's Base color first so focused/QSS-styled inputs retain the correct background while their clipped text is masked.
 - Protocol's embedded filter-state control remains above the text fade and is not obscured.
 
-### Input edge fade boundary hardening
+#### Input edge fade boundary hardening
 
 - Reworked long-input edge fading to mask from the actual styled `QLineEdit` contents rectangle rather than the estimated text rectangle.
 - Added an explicit fully opaque edge guard before each alpha ramp so fractional-DPI antialiasing cannot leave a one-pixel glyph fragment visible at the clipped boundary.
 - Expanded the fade span slightly and paints across the complete usable input height, fixing the remaining left/right edge artifacts visible with long Protocol and policy input values.
 - Preserved the soft alpha transition farther inside the field and preserved the Protocol state-filter glyph above the parent edit paint layer.
 
-### Tooltip underline and minimum-width consistency
+#### Tooltip underline and minimum-width consistency
 
 - Increased the application-wide informational `QToolTip` red bottom underline from 2 px to 3 px so ordinary tooltips match the stronger Protocol-filter tooltip presentation.
 - Kept the yellow full-value tooltip used for genuinely truncated table cells unchanged.
@@ -139,7 +259,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 
 
 
-### Policy tooltip, badge, lane-font, input-fade and minimum-width refinement
+#### Policy tooltip, badge, lane-font, input-fade and minimum-width refinement
 
 - Raised the final v1.1.1.1 main-window minimum width from the temporary 666 px development value to **999 px** while preserving the 520 px minimum height and native `WM_GETMINMAXINFO` enforcement.
 - Removed the former composite policy-ID tooltip that accumulated rule history/provenance and could continue showing previous IDs after an ID was renamed.
@@ -155,7 +275,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - The fade mask now starts at the actual inside edge of the line-edit frame, fully covers style padding where Qt can paint partial glyphs, reaches a fully opaque background at the clipped edge, and transitions to transparent over the visible text.
 - Fade background colors now match Semaphore's actual input surfaces, including the inline policy-ID editor's normal and gold focus/hover states, eliminating the residual edge fragments produced by mismatched QSS/palette colors.
 
-### Window minimum, badge-border, Whitelist-font, Country-tooltip and bidirectional input-fade corrections
+#### Window minimum, badge-border, Whitelist-font, Country-tooltip and bidirectional input-fade corrections
 
 - Hardened the **999 px** main-window minimum so it is enforced by one canonical `999x520` constant set across Qt sizing, Win32 `WM_GETMINMAXINFO`, resize events, restored Qt geometry and native `SetWindowPos` tray restores.
 - Legacy/saved placements smaller than the new minimum are now clamped or rejected instead of being able to restore Semaphore below 999 px wide after startup or tray restore.
@@ -166,7 +286,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - Protocol search now places the right fade at the actual text viewport edge before the embedded filter glyph, rather than underneath the glyph at the outer line-edit frame.
 - When the caret is moved back through a long value with the arrow keys, the right edge now gains its own opaque guard + alpha fade while the left edge remains faded whenever text is still hidden there.
 
-### Badge geometry, empty-cell hatch, input-caret fade and 1280 px minimum
+#### Badge geometry, empty-cell hatch, input-caret fade and 1280 px minimum
 
 - Raised the v1.1.1.1 main-window minimum width from 999 px to **1280 px** while preserving the 520 px minimum height and the existing Qt/Win32/startup/tray enforcement paths.
 - Cell badges no longer use rounded corners: fills and outlines are now square, non-antialiased rectangles aligned to the table grid.
@@ -175,7 +295,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - Corrected the long-input fade endpoint edge case where returning the caret to character 0 could leave a stale left fade because QLineEdit hit-testing rounded the leftmost pixel to position 1. Caret-at-start/end now authoritatively clears the corresponding fade.
 - The edge-fade overlay now excludes Qt's native insertion-caret rectangle, so the blinking cursor pipe keeps full contrast and is never alpha-faded by the overflow mask.
 
-### Empty-cell hover hatch and input-caret artifact correction
+#### Empty-cell hover hatch and input-caret artifact correction
 
 - Restored empty-cell parallel hatching to **white** in the normal state; only direct cell hover switches the hatch to **black** for contrast against the gold hover background.
 - Selection without hover no longer forces the hatch black.
@@ -183,7 +303,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - The fade now remains continuous across the full text surface and redraws only a one-pixel blinking insertion pipe above the mask when the caret itself falls inside a faded edge, preserving cursor visibility without uncovering adjacent text.
 
 
-### 2026-08-15 — 1366 px minimum, exact compact traffic widths, and input-fade/caret correction
+#### 2026-08-15 — 1366 px minimum, exact compact traffic widths, and input-fade/caret correction
 
 - Raised the enforced Semaphore main-window minimum width from 1280 px to 1366 px while retaining the 520 px minimum height; the shared minimum remains authoritative for Qt sizing, native `WM_GETMINMAXINFO`, resize correction, startup restore and tray/native restore paths.
 - Reworked compact live-traffic column sizing across Outbound, Inbound and Through so non-stretch metadata columns use the same left/right geometry as their actual delegate content instead of retaining one-sided trailing safety margins.
@@ -195,7 +315,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - Fixed false left-edge input fading when moving the caret only one or two characters from the start of a long value: fade activation now follows the reconstructed QLineEdit horizontal scroll only, without the previous eager cursor hit-test fallback.
 - Removed the synthetic manually redrawn caret that could produce two visible insertion pipes. The native Qt caret is preserved through a narrow 1–2 px exclusion in the fade clip, avoiding both caret fading and the former wide glyph-reveal artifact.
 
-### 2026-08-15 — traffic content-fit correction, From/To headers, and caret-safe input fading
+#### 2026-08-15 — traffic content-fit correction, From/To headers, and caret-safe input fading
 
 - Corrected the over-tight compact traffic-column calculation introduced by the previous exact-fit pass. Plain cells now retain the delegate's symmetric 2 px text insets plus a 2 px grid/font-metrics guard, and badge columns retain a 2 px symmetric rendering guard; this prevents `#`, D&T, local endpoint, Port and Protocol values from being elided when their measured text nominally equals the section width.
 - Width measurement now takes the larger of `horizontalAdvance()` and the rendered font bounding width, covering glyph side bearings at Windows fractional DPI while keeping the visible left/right margins effectively symmetric instead of restoring the former large trailing safety tail.
@@ -204,7 +324,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - Increased the QLineEdit overflow-scroll activation tolerance so moving only a few characters from the start cannot create a false left fade before the text has actually scrolled.
 - Removed caret-region clipping from the fade overlay. When the native caret reaches an edge-fade region, that fade now terminates immediately before/after the caret instead of punching a transparent stripe through already-rendered text, preventing the recurring double-pipe/glyph-stroke artifact while leaving Qt solely responsible for caret drawing and blink timing.
 
-### Header terminology and final input-fade edge cleanup
+#### Header terminology and final input-fade edge cleanup
 
 - Shortened policy-table headers from `First IP Range` / `Last IP Range` to `First IP` / `Last IP`.
 - Shortened displayed protocol headers and the Protocol selector's integrated placeholder from `Protocol` to `Proto`.
@@ -212,7 +332,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - Removed the permanent caret-shaped transparency from the fade; when the caret reaches an active fade, Semaphore fully masks the hidden side, covers the native caret locally, and redraws exactly one 1 px caret using the configured Qt blink cadence.
 
 
-### Input overflow fade and mixed counted-row history
+#### Input overflow fade and mixed counted-row history
 
 - Fixed the edge-fade/caret interaction so the fade no longer erases every character between the viewport edge and the caret before the caret actually reaches the boundary.
 - Complete visible characters remain intact while navigating overflowing inputs; only the platform caret pixels are replaced inside an active fade to prevent a hidden neighbouring glyph tail from leaking past the insertion pipe.
@@ -222,7 +342,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - Advanced persisted traffic iterator data to version 13 so per-iteration result colors survive restart while retaining compatibility with older history formats.
 - WFP classify-drop reconciliation now updates the matching newest iteration snapshot as well, so an authoritative blocked result cannot leave that individual modal entry green.
 
-### Input fade navigation stabilization
+#### Input fade navigation stabilization
 
 - Reworked overflowing QLineEdit edge fading so the overlay no longer masks, replaces, clips around, or manually redraws the insertion caret at any stage.
 - Removed the custom fade-caret blink machinery entirely; Qt is again the sole owner of caret placement and blink state.
@@ -230,7 +350,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - When the native caret approaches an active left/right fade, only that fade is shortened by a small clearance so the caret and the complete adjacent visible glyphs remain untouched.
 - Preserved independent hidden-left/hidden-right detection from the reconstructed QLineEdit horizontal scroll state, including the existing start/end safeguards.
 
-### Video-verified input-fade navigation correction
+#### Video-verified input-fade navigation correction
 
 - Reviewed the recorded Protocol-search navigation sequence frame-by-frame and confirmed the remaining defect was not the hidden-side detector itself: the fade endpoint was moving through arbitrary pixel positions while Qt simultaneously scrolled the shaped text, so the transition could land inside a glyph and visually slice/reveal character fragments.
 - Replaced integer `QFontMetrics` edge positioning in the overflow-fade path with `QTextLayout` shaped-text cursor geometry, keeping fade placement aligned with Qt's actual glyph shaping and fractional-DPI cursor positions.
@@ -249,7 +369,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - Reworked the Protocol picker search control into a native 16-character monospaced `QLineEdit`; the tri-state protocol filter is now a separate square control with its own gold border, eliminating shared text/toggle pixels and custom fade/caret repainting from that editor.
 - Protocol-search caret movement, selection, clipping and horizontal scrolling are now fully native Qt behavior, preventing the prior custom fade layer from slicing glyphs or producing caret-pipe artifacts.
 - Added `Update-Dependencies.bat` plus `tools/update-dependencies.ps1` to audit/update Semaphore's managed development dependencies: stable Qt packages and matching Qt/MinGW toolchain through Qt Maintenance Tool, current CMake/Ninja through WinGet when available, plus reporting for Windows PktMon and project-managed resource dependencies. Preview/beta/RC Qt releases are explicitly excluded.
-### Dependency-updater PowerShell parser correction
+#### Dependency-updater PowerShell parser correction
 
 - Fixed the new dependency updater failing before execution under Windows PowerShell because `$rc:` inside an interpolated error string was parsed as an invalid scoped-variable reference.
 - The exit-code interpolation now uses `${rc}:`, preserving the intended diagnostic while remaining valid in Windows PowerShell 5.1 and newer PowerShell versions.
@@ -265,7 +385,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - Protocol search caret now clears exactly one pixel column beneath the blinking pipe so the caret fully covers underlying characters without duplicated tails.
 
 
-### Dependency-updater log-file locking correction
+#### Dependency-updater log-file locking correction
 
 - Fixed `Update-Dependencies.bat` failing during the Qt Maintenance Tool check because `Start-Transcript` and `Tee-Object` attempted to write the same `dependency-update-*.log` file concurrently under Windows PowerShell.
 - `Start-Transcript` is now the single owner of the dependency log; native command output is captured first and replayed through `Write-Host`, so it is still recorded in the transcript without opening a competing file handle.
@@ -277,9 +397,9 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - `windeployqt` now explicitly opts out of the unused system DXC compiler probe (`dxcompiler.dll` / `dxil.dll`), eliminating the irrelevant Direct3D 12 deployment warning.
 - `windeployqt` now explicitly excludes `qopensslbackend`; Semaphore keeps Qt's Windows Schannel and certificate-only TLS backends, avoiding the optional OpenSSL-probe warning without adding an unnecessary OpenSSL runtime dependency.
 
-## Final release hardening after the build/tooling cleanup
+### Final release hardening after the build/tooling cleanup
 
-### Policy editing and normalization
+#### Policy editing and normalization
 
 - Manual Blacklist/Whitelist field edits now re-enter the canonical rule-reconciliation path instead of only changing the visible cell value.
 - Address-only rules that become scoped through Lane/Proto/Port/ID Filter edits are separated into standalone scoped rules, while rules edited back to equivalent address-only scope can rejoin the optimized range store.
@@ -287,7 +407,7 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - ID edits trigger canonical deduplication after the editor commits.
 - Newly arriving traffic selector cells resolve their logical Allow/Block state before first paint instead of briefly exposing an internal neutral/pending gray state.
 
-### Typography, controls and editable-field rendering
+#### Typography, controls and editable-field rendering
 
 - Removed affected native/default-font fallbacks and standardized Semaphore-created policy dialogs, menus, controls and editors on the existing **Anonymous Pro** family without shrinking their intended point sizes.
 - Corrected the manual `+` Protocol selector and ID Filter typography so nested popup content no longer falls back to Arial/default UI fonts or a reduced-looking size.
@@ -298,21 +418,21 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 - Live traffic ID editing preserves its badge/editor visual treatment and selection colors rather than introducing a second unrelated native editor style.
 - Removed the `Lists / policy` helper wording in favor of the shorter **Rules** tooltip.
 
-### Long-input navigation/caret hardening
+#### Long-input navigation/caret hardening
 
 - Reworked long-input horizontal overflow handling around Qt's real line-edit geometry and native scrolling behavior.
 - Eliminated competing text/caret paint paths that produced halos, duplicated insertion pipes, partial glyph tails and discolored text around the caret.
 - Edge fading is now applied without moving the beginning of a value merely because the caret moved one character from the start.
 - Long manual-rule and inline policy editors preserve full-field editing while revealing genuinely hidden text only at the active overflow edge.
 
-### GeoIP, validation and build diagnostics
+#### GeoIP, validation and build diagnostics
 
 - `Customize-GeoIP.bat` now leaves a failed customization session visible, reports the failed stage and exit code, and waits for confirmation instead of closing before the diagnostic can be read.
 - Refreshed `tools/validate-source.py` away from obsolete development-token checks and aligned validation with the current v1.1.1.1 source structure.
 - Fixed validator ordering/scope errors that could raise Python exceptions before current-source checks completed.
 - Preserved successful City, ASN, flag-pack and manifest generation while making validation failure reporting explicit.
 
-### Compile fixes
+#### Compile fixes
 
 - Corrected the custom-caption maximize-button cast when the stored button is a `QPointer<QPushButton>`.
 - Corrected a `QColor selectedText` local variable that shadowed `QLineEdit::selectedText()` in the live ID editor renderer.
@@ -321,11 +441,11 @@ This changelog is intentionally exhaustive for the v1.1.1 → v1.1.1.1 developme
 
 ---
 
-# Semaphore v1.1.1 — Exhaustive changes since v1.1
+## Semaphore v1.1.1 — Exhaustive changes since v1.1
 
 This changelog is intentionally exhaustive for the v1.1 → v1.1.1 development cycle.
 
-## Added
+### Added
 
 - Local ASN organization lookup for public IPv4/IPv6 endpoints using packaged MaxMind GeoLite2 ASN data.
 - Compact runtime ASN organization data generated for Semaphore instead of performing per-address online organization lookups.
@@ -407,7 +527,7 @@ This changelog is intentionally exhaustive for the v1.1 → v1.1.1 development c
 - Validator support for the generated ASN organization resource/data path.
 - Qt 6.11.1-specific compile/validation repairs introduced by the new policy and viewport code.
 
-## Changed
+### Changed
 
 - Blacklist and Whitelist remain unified pages instead of retaining the temporary Absolute/Scoped split explored during v1.1.1 development.
 - Policy controls were reorganized around the unified table instead of a separate permanent right-side action panel.
@@ -470,7 +590,7 @@ This changelog is intentionally exhaustive for the v1.1 → v1.1.1 development c
 - Startup restoration orders policy, generated identities, window geometry and release checking so one does not overwrite another.
 - The main version identity/badge moved from v1.1 to v1.1.1.
 
-## Fixed
+### Fixed
 
 - Public IPs remaining `Unnamed` even though a local ASN organization could identify them.
 - Generated organization identities not propagating consistently to other tables containing the same endpoint.
@@ -565,7 +685,7 @@ This changelog is intentionally exhaustive for the v1.1 → v1.1.1 development c
 - Counter/address tooltips failing to expose the complete elided value consistently.
 - Stale source/validator warnings and compile mismatches introduced during successive v1.1.1 overlays.
 
-## Removed / stripped
+### Removed / stripped
 
 - Dependence on an online ISP/organization lookup service for automatic endpoint identification.
 - Need to issue a network request for every new public address merely to obtain an organization name.
@@ -593,7 +713,7 @@ This changelog is intentionally exhaustive for the v1.1 → v1.1.1 development c
 - Temporary development/update-state labels that are not part of normal stable-release behavior.
 - Square native backing corners around rounded custom release/menu surfaces.
 
-## Preserved
+### Preserved
 
 - Driverless Windows Packet Monitor capture architecture.
 - Direct Windows Filtering Platform hard-block enforcement.
@@ -630,11 +750,11 @@ This changelog is intentionally exhaustive for the v1.1 → v1.1.1 development c
 
 ---
 
-# Semaphore v1.1 — Exhaustive changes since v1
+## Semaphore v1.1 — Exhaustive changes since v1
 
 This changelog is intentionally exhaustive for the v1 → v1.1 development cycle.
 
-## Added
+### Added
 
 - Unlimited Blacklist/Whitelist table presentation.
 - Dynamic list `#` column width based on final row count.
@@ -660,7 +780,7 @@ This changelog is intentionally exhaustive for the v1 → v1.1 development cycle
 - Additional Windows icon size frames.
 - Visible `v1.1` version badge.
 
-## Changed
+### Changed
 
 - Large-list sorting precomputes numeric IPv4 keys.
 - Range merge paths reduce unnecessary copying.
@@ -686,7 +806,7 @@ This changelog is intentionally exhaustive for the v1 → v1.1 development cycle
 - Version identity moved from v1 to v1.1.
 - Application icon has higher contrast/definition and improved small-size presentation.
 
-## Fixed
+### Fixed
 
 - Blacklist/Whitelist totals diverging from a 999-row truncated table.
 - Massive-list performance degradation caused by repeated address parsing and table churn.
@@ -714,7 +834,7 @@ This changelog is intentionally exhaustive for the v1 → v1.1 development cycle
 - `optimizeNamedRanges` 2-argument/3-argument declaration mismatch.
 - Qt 6.11 mixed-type `qBound()` overload ambiguity.
 
-## Removed / stripped
+### Removed / stripped
 
 - 999-row Blacklist/Whitelist view cap.
 - Yellow blocked-country flag border.
@@ -730,7 +850,7 @@ This changelog is intentionally exhaustive for the v1 → v1.1 development cycle
 - Missing-progress gap between list construction and WFP application.
 - Excess tray-menu horizontal padding.
 
-## Preserved
+### Preserved
 
 - Driverless Windows Packet Monitor capture architecture.
 - Direct Windows Filtering Platform hard-block enforcement.
