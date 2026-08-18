@@ -6,7 +6,8 @@ Security fixes are provided for the current stable Semaphore release.
 
 | Version | Supported |
 |---|---|
-| `v1.1.1.1` | Yes |
+| `v1.1.1.2` | Yes |
+| `v1.1.1.1` | No |
 | `v1.1.1` | No |
 | `v1.1` | No |
 | `v1` | No |
@@ -61,6 +62,7 @@ Security fixes may be released using Semaphore's compact zero-free hierarchy, fo
 v1.1.1
 v1.1.1.1
 v1.1.1.2
+v1.1.1.3
 ...
 v1.1.2
 ```
@@ -73,7 +75,7 @@ Semaphore stable releases are distributed as portable Windows x64 assets. The pu
 
 ## Network and Privacy Notes
 
-Semaphore monitors local network activity and can actively modify Windows Filtering Platform policy. GeoIP, ASN organization and special-purpose address identification are performed from local application resources. When release checking is enabled, Semaphore contacts the public GitHub Releases API to determine whether a newer stable release exists.
+Semaphore monitors local network activity and can actively modify Windows Filtering Platform policy. GeoIP, ASN organization and special-purpose address identification are performed from local application resources. When release checking is enabled, Semaphore contacts the public GitHub Releases API after startup and approximately hourly while running to determine whether a newer stable release exists. This release check does not upload captured traffic, firewall Rules, endpoint history, GeoIP/ASN results or usage analytics.
 
 ## Responsible Testing
 
